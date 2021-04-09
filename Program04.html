@@ -1,0 +1,290 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>KVS Programming Guide</title>
+<!-- InstanceEndEditable -->
+<link href="base.css" rel="stylesheet" type="text/css" media="screen, tv, projection" />
+<!-- Code 装飾用 Google google-code-prettify -->
+<!--<link rel="stylesheet" type="text/css" href="code-prettify/src/prettify.css">-->
+<!--<link rel="stylesheet" type="text/css" href="../code-prettify/styles/desert.css">-->
+<link rel="stylesheet" type="text/css" href="code-prettify/styles/tomorrow-night-blue.css">
+<script type="text/javascript" src="code-prettify/src/prettify.js"></script>
+<script type="text/javascript" src="code-prettify/src/lang-css.js"></script>
+<!-- ここまで -->
+
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<!-- InstanceParam name="id" type="text" value="Prog04" -->
+</head>
+
+<body onload="PR.prettyPrint()" id="Prog04">
+<div id="wrapper">
+  <div id="header">
+    <h1>KVS vsrsion 2.x Tutorial</h1>
+    <p>&nbsp;</p>
+    <p align="right"> kvs version 2.9</p>
+    <p align="right">kvs : <a href=" https://github.com/naohisas/KVS" target="_blank"> https://github.com/naohisas/KVS</a></p>
+  </div>
+  <!-- end div#header -->
+  
+  <div id="sidebar">
+  <!-- InstanceBeginEditable name="sidebarArea" -->
+  <dl>
+    <dd id="nInstall"><a href="install.html">インストール</a></dd>
+    <dd id="nBasis"><a href="basis.html">基本的な使い方</a></dd>
+    <dd id="nTransFunc"><a href="transFunc.html">伝達関数を調整する</a></dd>
+    <dd id="nDICOM"><a href="DICOM.html">DICOMデータを読み込む</a></dd>
+  </dl>
+  <p><strong><br />
+  </strong></p>
+  <p><strong> <a href="Program.html">KVSプログラムの作成</a></strong></p>
+  <dl>
+    <dd id="nProg01"><a href="Program01.html">3次元ベクトルの演算</a></dd>
+    <dd id="nProgMatrix"><a href="ProgramMatrix.html">行列クラス</a></dd>
+    <dd id="nProg02"><a href="Program02.html">行列の演算（行列クラスの応用）</a></dd>
+    <dd id="nProgRandom"><a href="ProgramRandom.html">乱数生成</a></dd>
+    <dd id="nProg03"><a href="Program03.html">オブジェクトについて</a></dd>
+    <dd id="nProg04"><a href="Program04.html">構造型ボリュームデータの作成</a></dd>
+        <dt>例　構造型ボリュームデータ</dt>
+        <dt><a href="#sec2">問題　ボリュームデータの作成</a></dt>
+    <dd id="nProg05"><a href="Program05.html">面データの可視化</a></dd>
+    <dd id="nProgIso"><a href="ProgramIso.html">等値面の可視化</a></dd>
+    <dd id="nProg06"><a href="Program06.html">可視化パイプライン</a></dd>
+    <dd id="nProg07"><a href="Program07.html">レイキャスティングの実装</a></dd>
+    <dd id="nProg08"><a href="Program08.html">PBVRの実装</a></dd>
+    <dd id="nAppendix"><a href="Appendix.html">付録：プログラム集（仮）</a></dd>
+  </dl>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#sidebar -->
+
+  <div id="main">
+  <!-- InstanceBeginEditable name="mainArea" -->
+    <h2>例　構造型ボリュームデータ</h2>
+    <p>関数値：</p>
+    <p>　f(x, y, z) = 3 - x<Sup>2</Sup> - y<sup>2</sup> - 4z<sup>2</sup></p>
+    <p>をフィールド値にもつ構造型ボリュームデータを作成し，AVS Fieldファイルとして出力します．</p>
+    <p>KVSで定義されている構造型ボリュームデータ（StructuredVolumeObject）クラスは</p>
+    <p>メンバ変数として</p>
+    <ul>
+      <li>グリッド数（kvs::Vector3ui），</li>
+      <li>グリッドタイプ（enum型　｛Uniform, Rectilinear, Curvilinear,  Irregular}　），</li>
+      <li>各要素のデータ数（size_t），</li>
+      <li>フィールドデータ（kvs::AnyValueArray），</li>
+      <li>グリッド座標（kvs::ValueArray&lt;float&gt;）</li>
+    </ul>
+    <p>をもちます．</p>
+    <p>ここでは，特に<span class="pRed">kvs::ValueArray</span> クラスのフィールドデータの登録の仕方について説明します．</p>
+    <p>&nbsp;</p>
+    <p></p>
+<p></p>
+    <h3>1.　作業ディレクトリの作成</h3>
+    <p>作業ディレクトリに「CreateField」というディレクトリを作成して，移動して下さい． <br />
+    </p>
+    <p class="code">$ mkdir   CreateField</p>
+    <p class="code">$ cd CreateField </p>
+    <h3>&nbsp;</h3>
+    <h3>2.　main.ccp の作成</h3>
+    <p>「main.cpp」というファイルを作成して下さい．</p>
+    <p>関数値評価のためにインライン関数を作成します．</p>
+<code><pre class="prettyprint lang-cpp">
+inline float func( float x, float y, float z ) {
+   return ( 3.0 - x*x - y*y - 4.0*z*z );
+}
+ 
+int main( void )
+{
+   return ( 0 );
+}
+</pre></code>
+<p>&nbsp;</p>
+<h3>3.　データ生成の準備</h3>
+<p>構造型ボリュームデータの<span class="pRed">グリッド数をunsigned int型の3次元ベクトル</span>として宣言します．</p>
+<p>ここでは，データのグリッド数はdim1 = dim2 = dim3 = 64 とします．</p>
+<code><pre class="prettyprint lang-cpp">
+kvs::UInt32 gridNum = 64;
+const kvs::Vector3ui resol(gridNum, gridNum, gridNum);
+</pre></code>
+<p>フィールドデータは<span class="pRed">kvs::ValueArray</span> クラスを使ってデータを登録し，<span class="pRed">kvs::AnyValueArray型</span> に渡します．</p>
+<p>kvs::ValueArray クラスはインスタンス生成時にメモリの割り当てを行い，</p>
+<p></p>
+<ul>
+  <li>データサイズ</li>
+  <li>データを格納する動的配列</li>
+</ul>
+<p>をメンバにもっています．<br />
+  ここでは64×64×64のfloat型データとしてメモリを確保します．</p>
+<code><pre class="prettyprint lang-cpp">
+kvs::ValueArray&lt;float&gt; data( gridNum * gridNum * gridNum );
+</pre></code>
+<p></p>
+<p>&nbsp;</p>
+<h3>4.　データの格納</h3>
+<p>kvs::AnyValueArray クラスではフィールドデータを直接配列に格納することはできません．</p>
+<p>代わりに，<span class="pRed">データへのポインタを使って操作</span>します．</p>
+<code><pre class="prettyprint lang-cpp">
+float* pdata = data.data(); 
+</pre></code>
+<p>x, y, zの定義域を[-2, 2]として，グリッドサイズが各々64となる格子点上で関数値を評価します．</p>
+<p>評価した関数値はpdata を使って値を格納していきます．</p>
+<code>
+<pre class="prettyprint lang-cpp">
+float min = -2.0, max = 2.0;
+float dt = (float)(max - min)/(float)(gridNum-1);
+ 
+kvs::UInt64 index = 0;
+for(int k=0; k&lt;gridNum; k++) {
+   for(int j = 0; j&lt;gridNum; j++) {
+      for(int i=0; i&lt; gridNum; i++) {
+         float x = (float)min + (float)i*dt;
+         float y = (float)min + (float)j*dt;
+         float z = (float)min + (float)k*dt;
+         // 関数値を評価してdataへ格納
+         pdata[ index++ ] = func(x, y, z) ;
+　　}
+　}
+} 
+</pre></code>
+<p></p>
+<p>&nbsp;</p>
+<h3>5.　構造型ボリュームデータ（StructuredVolumeObject）の作成</h3>
+<p>構造型ボリュームデータ（StructuredVolumeObject）を作成します．</p>
+<p>ここでは，<span class="pRed">kvs:: StructuredVolumeObject</span>のインスタンスを生成し，データをセットします．</p>
+<p>最低限必要なデータは以下の 4 種類です．</p>
+<ul>
+  <li>グリッドタイプ（enum型｛Uniform, Rectilinear, Curvilinear, Irregular}）</li>
+  <li>グリッドサイズ（kvs::Vector3ui）</li>
+  <li>各要素のデータ数（size_t）</li>
+  <li>フィールドデータ値（kvs::AnyValueArray）</li>
+</ul>
+<p>です．</p>
+<code><pre class="prettyprint lang-cpp">
+size_t veclen = 1;　&nbsp;&nbsp;&nbsp;&nbsp;// 各要素のデータ数の設定
+kvs::StructuredVolumeObject *volume =
+              new kvs::StructuredVolumeObject ( );
+// データのセット
+volume-&gt;setGridType( kvs::StructuredVolumeObject::Uniform );	// グリッドタイプ
+volume-&gt;setResolution( resol );&nbsp;&nbsp;&nbsp;	// グリッドサイズ
+volume-&gt;setVeclen( vecren );&nbsp;&nbsp;&nbsp;	// 各要素のデータ数
+volume-&gt;setValues( data );&nbsp;&nbsp;&nbsp;	// フィールドデータ
+</pre></code>
+<p>&nbsp;</p>
+<h3>6.　ファイルへのエクスポート</h3>
+<p>構造型ボリュームデータをAVS Fieldファイルへエクスポートします．</p>
+<p>AVSFieldファイルへエクスポートするために<span class="pRed">kvs::StructuredVolumeExporterク</span>ラスを使用し，</p>
+<p><span class="pRed">kvs::AVSField</span>クラスのインスタンスを作成します．</p>
+<p>kvs::StructuredVolumeExporterはファイルフォーマットタイプ（ここでは，kvs::AVSField）を指定し，</p>
+<p>引数にkvs::StructuredVolumeObjectを渡します．</p>
+<code>
+<pre class="prettyprint lang-cpp">
+kvs::AVSField* field =
+   new kvs::StructuredVolumeExporter&lt;kvs::AVSField&gt;( volume );
+ 
+if( !field ) {        // エクスポートできたかチェックする
+   std::cout &lt;&lt; &quot;Cannot export Resized volume data.&quot; &lt;&lt;std::endl;
+   delete volume;
+   return (false);
+}
+</pre></code>
+<p>ファイルフォーマットを定義したクラスにはファイル出力のためのメソッドwrite()が定義されています．</p>
+<p>ファイル名は引数として渡します．</p>
+<code><pre class="prettyprint lang-cpp">
+if ( !field-&gt;write( &quot;test.fld&quot; ) ) {      // ファイル書き込みができたかチェックする
+   std::cout &lt;&lt; &quot;Cannot write to the file as AVS field format.&quot; &lt;&lt; std::endl;
+   delete volume;
+   return( false );
+}
+</pre></code>
+<p></p>
+<p>出力できるファイルフォーマットタイプとしては他に，</p>
+<p>KVS独自のファイル形式KVSML(<span class="pRed">kvs::KVSMLObjectStructuredVolume</span>)を指定することができます．</p>
+<p>&nbsp;</p>
+<h3>7.　ヘッダファイル</h3>
+<p>使用したKVSクラスをインクルードします．</p>
+<p>ここでは，</p>
+<ul>
+  <li>kvs::Vector3ui</li>
+  <li>kvs::StructuredVolumeObject</li>
+  <li>kvs::StructuredVolumeExporter</li>
+  <li>kvs::AVSField</li>
+</ul>
+<p>を使いました．</p>
+<code><pre class="prettyprint lang-cpp">
+#include &lt;kvs/Vector3&gt;
+#include &lt;kvs/StructuredVolumeObject&gt;
+#include &lt;kvs/StructuredVolumeExporter&gt;
+#include &lt;kvs/AVSField&gt;
+</pre></code>
+<p>&nbsp;</p>
+<h3>8.　まとめ</h3>
+<p>以上をまとめたプログラムはこちら：　<a href="./Program/CreateField.tgz">CreateField.tgz</a></p>
+<p>&nbsp;</p>
+<h3>9.　コンパイルと実行</h3>
+<p>作成したプログラムをコンパイル，実行してみましょう．</p>
+<p>KVSプログラムをコンパイルするためにはkvsmakeコマンドを用いてMakefileを作成すると簡単にコンパイルを行うことができます．</p>
+<p class="code">$ kvsmake -G　　　　　　　　　　&lt;-- Makefile の作成</p>
+<p class="code">$ kvsmake　　　　　　　　　　　　&lt;-- コンパイル</p>
+<p>エラーなくコンパイルできたら，実行してみましょう．</p>
+<p>実行すると，『test.fld』というファイルが作成できます．</p>
+<p class="code">$ ./CreateField　　　　　　　　　　　　　　</p>
+<p class="code">$ ls</p>
+<p class="code">CreateField　　     Makefile.kvs　　　main.cpp　　　test.fld
+  <br />
+</p>
+<p></p>
+<p>&nbsp;</p>
+<p>どのような データが作成されたのか確認するため，</p>
+<p>KVSコマンドアプリケーションkvsviewを使って零等値面を描画して確かめてみましょう．<br />
+</p>
+<div class="code">
+  <p>$ kvsview -Isosurface -l 0 test.fld　　　　&lt;---　ボリュームデータ零等値面を描画する</p>
+</div>
+<p></p>
+<p>&nbsp;</p>
+<p class="image"><img src="img/CreateField.png" alt="Create AVS Field" width="400" /><br />
+作成したボリュームデータの零等値面描画</p>
+<p>&nbsp;</p>
+<a name="sec2"></a>
+<h2>問題　KVSML形式のボリュームデータを作成しよう</h2>
+<p>関数値：</p>
+<p>　f(x, y, z) = 1 - x<sup>2</sup> - ( y - |x| )<sup>2</sup> - z<sup>4</sup></p>
+<p>をフィールド値にもつ構造型ボリュームデータを作成し，KVSMLファイルとして出力しよう．</p>
+<p>ただし，gridNum は標準入力するようにすること．　</p>
+<p>（ヒント）</p>
+<p>Export する際にtemplate 型を &lt;kvs::KVSMLObjectStructuredVolume&gt;で指定します．</p>
+<code><pre class="prettyprint lang-cpp">
+kvs::KVSMLObjectStructuredVolume* field =
+ new kvs::StructuredVolumeExporter&lt;kvs::KVSMLObjectStructuredVolume&gt;(volume);
+</pre></code>
+<p>また，KVSMLファイル形式の拡張子は「<span class="pRed">.kvsml</span>」です．</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<!--<p align="right"><a href="Program/QuadricSurface_Ex.tar.gz">CreateField_Ex.tgz</a></p>-->
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p align="right">Modefied at July 9, 2014  </p>
+<p align="right">at April 21, 2017  </p>
+
+  <p>&nbsp;</p>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#main -->
+
+  <div id="fotter">
+    <p><a href="index.html">TOP</a>　</p>
+  </div>
+  <!-- end div#fotter -->
+    
+</div>
+<!-- end div#wrapper -->
+
+</body>
+<!-- InstanceEnd --></html>

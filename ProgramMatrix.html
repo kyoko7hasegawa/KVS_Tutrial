@@ -1,0 +1,259 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>KVS Programming Guide</title>
+<!-- InstanceEndEditable -->
+<link href="base.css" rel="stylesheet" type="text/css" media="screen, tv, projection" />
+<!-- Code 装飾用 Google google-code-prettify -->
+<!--<link rel="stylesheet" type="text/css" href="code-prettify/src/prettify.css">-->
+<!--<link rel="stylesheet" type="text/css" href="../code-prettify/styles/desert.css">-->
+<link rel="stylesheet" type="text/css" href="code-prettify/styles/tomorrow-night-blue.css">
+<script type="text/javascript" src="code-prettify/src/prettify.js"></script>
+<script type="text/javascript" src="code-prettify/src/lang-css.js"></script>
+<!-- ここまで -->
+
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<!-- InstanceParam name="id" type="text" value="ProgramMatrix" -->
+</head>
+
+<body onload="PR.prettyPrint()" id="ProgramMatrix">
+<div id="wrapper">
+  <div id="header">
+    <h1>KVS vsrsion 2.x Tutorial</h1>
+    <p>&nbsp;</p>
+    <p align="right"> kvs version 2.9</p>
+    <p align="right">kvs : <a href=" https://github.com/naohisas/KVS" target="_blank"> https://github.com/naohisas/KVS</a></p>
+  </div>
+  <!-- end div#header -->
+  
+  <div id="sidebar">
+  <!-- InstanceBeginEditable name="sidebarArea" -->
+  <dl>
+    <dd id="nInstall"><a href="install.html">インストール</a></dd>
+    <dd id="nBasis"><a href="basis.html">基本的な使い方</a></dd>
+    <dd id="nTransFunc"><a href="transFunc.html">伝達関数を調整する</a></dd>
+    <dd id="nDICOM"><a href="DICOM.html">DICOMデータを読み込む</a></dd>
+  </dl>
+  <p><strong><br />
+  </strong></p>
+  <p><strong> <a href="Program.html">KVSプログラムの作成</a></strong></p>
+  <dl>
+    <dd id="nProg01"><a href="Program01.html">3次元ベクトルの演算</a></dd>
+    <dd id="nProgMatrix"><a href="ProgramMatrix.html">行列クラス</a></dd>
+    <dt id="nProgMatrix">行列クラスについて</dt>
+    
+    <dd id="nProg02"><a href="Program02.html">行列の演算（行列クラスの応用）</a></dd>
+    <dd id="nProgRandom"><a href="ProgramRandom.html">乱数生成</a></dd>
+    <dd id="nProg03"><a href="Program03.html">オブジェクトについて</a></dd>
+    <dd id="nProg04"><a href="Program04.html">構造型ボリュームデータの作成</a></dd>
+    <dd id="nProg05"><a href="Program05.html">面データの可視化</a></dd>
+    <dd id="nProgIso"><a href="ProgramIso.html">等値面の可視化</a></dd>
+    <dd id="nProg06"><a href="Program06.html">可視化パイプライン</a></dd>
+    <dd id="nProg07"><a href="Program07.html">レイキャスティングの実装</a></dd>
+    <dd id="nProg08"><a href="Program08.html">PBVRの実装</a></dd>
+    <dd id="nAppendix"><a href="Appendix.html">付録：プログラム集（仮）</a></dd>
+  </dl>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#sidebar -->
+
+  <div id="main">
+  <!-- InstanceBeginEditable name="mainArea" -->
+  <h2>行列クラスについて</h2>
+  <p>ここでは3次正方行列のもつメソッドについて記載します．</p>
+  <p>（2次，4次でも要素数の違いがあるだけでほぼ同じメソッドをもっています）</p>
+  <p>3次正方行列  の省略型としては</p>
+<p> 　　f ：float型，　　d：double型</p>
+  <p>を宣言することができます．</p>
+  <p>これはfloat型，double型はKVS内で</p>
+  <p> 　　Matrix33f, Matrix33d</p>
+  <p> という名前を付け直されているためです（typedefによって）．</p>
+  <p>本来はtemplateクラスによって，</p>
+  <code><pre class="prettyprint lang-cpp">kvs::Matrix33&lt;float&gt; A;</pre></code>
+  <p>と記述します．ですので，float型，int型以外の型を使用する場合は</p>
+  <code><pre class="prettyprint lang-cpp">kvs::Matrix33&lt;unsigned char&gt; B;</pre></code>
+  <p>とすれば行列クラスを使うことができます．</p>
+  <h3>行列クラスのもつメソッド</h3>
+<p>行列クラスに用意されているメソッドについては実際に，</p>
+<p class="pRed">　(KVSのソースをダウンロードしたディレクトリ) kvs-src/Source/Core/Matrix/Matrix33.h</p>
+<p>を見てみるとよいと思います．</p>
+<p>ここでは，各メソッドについて使い方を簡単に説明します．</p>
+<h4>コンストラクタ</h4>
+<p>float型の行列kvs::Matrix33f を作成する方法としては以下のように4種類用意されています．</p>
+<p>※初期値を指定しないでオブジェクトを生成した場合には，初期値 0 が入ります．</p>
+<code><pre class="prettyprint lang-cpp">
+// 値を指定しない
+kvs::Matrix33f A;
+ 
+// 成分を１つ１つ記述する
+kvs::Matrix33f B( 1.0, 2.0, 0.0,
+                  2.0, 2.0, 1.0,
+                  0.0, 1.0, 3.0 );
+ 
+// 3次元ベクトルを３つ並べる
+kvs::Vector3f v0( 1.0, 1.0, 1.0 );
+kvs::Vector3f v1( 2.0, 2.0, 1.0 );
+kvs::Vector3f v2( 1.0, 2.0, 4.0 );
+// v0, v1, v2 は行ベクトルとしてセットされる
+kvs::Matrix33f C( v0, v1, v2 );
+ 
+// 配列を代入する
+float elem[9] = { 1.0, 2.0, 3.0,
+                  4.0, 5.0, 6.0,
+                  7.0, 8.0, 9.0 };
+kvs::Matrix33f D( elem );
+</pre></code>
+<h4>値の代入：　演算子[ ],　  zero( ),　 identity( ), 　set( )</h4>
+<p>配列と同様に演算子[ ] を使えるほか，零行列にするメソッド zero( )，単位行列にするメソッドidentity( )， </p>
+<p>値を代入するメソッド set( ) があります．</p>
+<p>また，set( ) は引数の渡し方によってオーバーロードされています．</p>
+<code><pre class="prettyprint lang-cpp">
+//  演算子 [ ] で値を代入する
+A[0][0] = 1.0; A[0][1] = 1.0; A[0][2] = 3.0;
+A[1][0] = 4.0; A[1][1] = 1.0; A[1][2] = 0.0;
+A[2][0] = 2.0; A[2][1] = 0.0; A[2][2] = 2.0;
+ 
+// 零行列
+A.zero();
+ 
+// 単位行列
+A.identity();
+ 
+// 要素１つ１つを代入する
+A.set( 1.0, 2.0, 2.0,
+       2.0, 2.0, 1.0,
+       0.0, 1.0, 3.0 );
+ 
+// ３次元ベクトルを３つ代入する
+A.set( v0, v1, v2 );
+ 
+// 配列を代入する
+A.set( elem );
+</pre></code>
+<h4>値の取得：　 演算子[ ]</h4>
+<p>代入と同様に演算子 [ ] が使えます．</p>
+<code><pre class="prettyprint lang-cpp">
+float a11 = a[1][1];
+std::cout &lt;&lt; a[0][0] &lt;&lt; &quot; &quot; &lt;&lt; a[0][1] &lt;&lt; &quot; &quot; &lt;&lt; a[0][2] &lt;&lt; std::endl;
+</pre></code>
+<h4>標準出力：　print( ),　 出力演算子&lt;&lt;</h4>
+<p>行列の要素を：</p>
+<div class="code">
+  <p>1 2 3</p>
+  <p>4 5 6</p>
+  <p>7 8 9</p>
+</div>
+<p>のように標準出力させるメソッド print( ) と，出力演算子&lt;&lt; があります．</p>
+<code><pre class="prettyprint lang-cpp">
+A.print( );
+std::cout &lt;&lt; A ;
+</pre></code>
+<p>は同じように標準出力されます．</p>
+<h4>転置行列：　transpose( ), transposed( )</h4>
+<p>転置行列を求めるメソッドには，以下の2種類があります．</p>
+<p>transpose( )は自身を上書きして転置行列とし，</p>
+<p>transposed( ) は転置を計算したあとの行列を戻り値にして自身を変更しません．</p>
+<code><pre class="prettyprint lang-cpp">
+// 自身に上書き
+A.transpose( );
+ 
+// 転置行列を返す（自身に上書きしない）
+kvs::Matrix33f E = B.transposed( );
+</pre></code>
+<p></p>
+<p></p>
+<p></p>
+<h4>逆行列：　invert( ), inverted( )</h4>
+<p>逆行列を求めるメソッドにも転置乗列の時と同様に，自身を上書きするメソッドといないメソッドがあります．</p>
+<p>invert( ) は自身を上書きして逆行列とし，</p>
+<p>inverted( )は逆行列を計算した結果の行列を戻り値にして自身を変更しません．</p>
+<code><pre class="prettyprint lang-cpp">
+// 自身に上書き
+C.invert( );
+ 
+// 転置行列を返す（自身に上書きしない）
+const kvs::Matrix33f F = B.inverted( );
+</pre></code>
+<h4>トレース：　trace( )，　行列式：　determinant( )</h4>
+<p>行列のトレースと行列式を計算するメソッドがあります．</p>
+<p>戻り値の型は行列クラスを宣言したときと同じ型になります．</p>
+<code><pre class="prettyprint lang-cpp">
+// トレース
+float tr = A.trace();
+ 
+// 逆行列
+float det = A.determinant();
+</pre></code>
+<h4>四則演算子：　+,　 -, 　*, 　/ </h4>
+<p>演算子 + (+=) は行列の要素同士の足し算を行います．</p>
+<p>演算子 - ( -= ) も同様です．また，オブジェクトに - をつけると各成分に - をつけたベクトルになります．</p>
+<code><pre class="prettyprint lang-cpp">
+C = A + B;
+A+=C;
+A -= B;
+std::cout &lt;&lt; -A &lt;&lt; std::endl;
+</pre></code>
+<p>演算子 * ( *= ) は行列の積，変数と行列の各要素，ベクトルと行列の積の3種類があります．</p>
+<p>変数と行列のかけ算では，複合演算子 *= を用いる場合には変数と行列の順番に注意して下さい．</p>
+<p>ベクトルと行列の積では，行列を演算子の前に書いた場合は行列と行ベクトルのかけ算を実行し，行列を演算子の後ろに書いた場には行ベクトルと行列のかけ算を実行します．どちらの場合も戻り値はベクトル型になります．</p>
+<code>
+<pre class="prettyprint lang-cpp">
+// 行列同士のかけ算
+C = A*B
+A*=B;
+ 
+// 変数と行列のかけ算
+int i = 10;
+C = i*B;
+C = B*i;	// この２つは同じ値になります
+C *= i;		// 計算可能です
+i*=C;		// !!! エラーになります !!!
+ 
+// 行列とベクトルのかけ算
+A.set( 1, 1, 1, 1, 1, 1, 2, 2, 2);
+v0.set( 1, 1, 1);
+kvs::Vector3f x = v0*A;      // 行ベクトルと行列のかけ算
+kvs::Vector3f y = A*v0;      // 列ベクトルと行列のかけ算
+</pre></code>
+<p>演算子 / (/= ) は変数と行列の各要素の割り算です．</p>
+<p>かけ算の時と同様に，割り算の場合には，変数と行列の順番に注意して下さい．</p>
+<code><pre class="prettyprint lang-cpp">
+D = C/i;
+C /= i;
+D = i/C;	// !!! エラーになります !!!
+i /= C;		// !!! エラーになります !!!
+</pre></code>
+<h4>関係演算子：　==,　 !=</h4>
+<p>行列同士が等しいか（各要素の値がすべて一致するか）どうかを判定する関係演算子があります．</p>
+<p>戻り値は bool型です．</p>
+<code>
+<pre class="prettyprint lang-cpp">
+// 値が等しいかどうか
+if( A == B ) {
+   std::cout &lt;&lt; &quot;A == B&quot; &lt;&lt; std::endl;
+} else if( A != B ) {
+   std::cout &lt;&lt; &quot;A != B&quot; &lt;&lt; std::endl; 
+} 
+</pre></code>
+<p>以上の内容をまとめたプログラム：　<a href="Program/MatrixTest.tgz">MatrixTest.tgz</a></p>
+<p>&nbsp;</p>
+<p align="right">Modefied at June 25, 2014</p>
+
+  <p>&nbsp;</p>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#main -->
+
+  <div id="fotter">
+    <p><a href="index.html">TOP</a>　</p>
+  </div>
+  <!-- end div#fotter -->
+    
+</div>
+<!-- end div#wrapper -->
+
+</body>
+<!-- InstanceEnd --></html>

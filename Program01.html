@@ -1,0 +1,457 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>KVS Programming Guide</title>
+<!-- InstanceEndEditable -->
+<link href="base.css" rel="stylesheet" type="text/css" media="screen, tv, projection" />
+<!-- Code 装飾用 Google google-code-prettify -->
+<!--<link rel="stylesheet" type="text/css" href="code-prettify/src/prettify.css">-->
+<!--<link rel="stylesheet" type="text/css" href="../code-prettify/styles/desert.css">-->
+<link rel="stylesheet" type="text/css" href="code-prettify/styles/tomorrow-night-blue.css">
+<script type="text/javascript" src="code-prettify/src/prettify.js"></script>
+<script type="text/javascript" src="code-prettify/src/lang-css.js"></script>
+<!-- ここまで -->
+
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<!-- InstanceParam name="id" type="text" value="Prog01" -->
+</head>
+
+<body onload="PR.prettyPrint()" id="Prog01">
+<div id="wrapper">
+  <div id="header">
+    <h1>KVS vsrsion 2.x Tutorial</h1>
+    <p>&nbsp;</p>
+    <p align="right"> kvs version 2.9</p>
+    <p align="right">kvs : <a href=" https://github.com/naohisas/KVS" target="_blank"> https://github.com/naohisas/KVS</a></p>
+  </div>
+  <!-- end div#header -->
+  
+  <div id="sidebar">
+  <!-- InstanceBeginEditable name="sidebarArea" -->
+  <dl>
+    <dd id="nInstall"><a href="install.html">インストール</a></dd>
+    <dd id="nBasis"><a href="basis.html">基本的な使い方</a></dd>
+    <dd id="nTransFunc"><a href="transFunc.html">伝達関数を調整する</a></dd>
+    <dd id="nDICOM"><a href="DICOM.html">DICOMデータを読み込む</a></dd>
+  </dl>
+  <p><strong><br />
+  </strong></p>
+  <p><strong> <a href="Program.html">KVSプログラムの作成</a></strong></p>
+  <dl>
+    <dd id="nProg01"><a href="Program01.html">3次元ベクトルの演算</a></dd>
+      <dt id="nProg1"> ベクトルクラスについて</dt>
+      <dt> <a href="#sec2">例　３次元ベクトルの演算</a></dt>
+
+    <dd id="nProgMatrix"><a href="ProgramMatrix.html">行列クラス</a></dd>
+    <dd id="nProg02"><a href="Program02.html">行列の演算（行列クラスの応用）</a></dd>
+    <dd id="nProgRandom"><a href="ProgramRandom.html">乱数生成</a></dd>
+    <dd id="nProg03"><a href="Program03.html">オブジェクトについて</a></dd>
+    <dd id="nProg04"><a href="Program04.html">構造型ボリュームデータの作成</a></dd>
+    <dd id="nProg05"><a href="Program05.html">面データの可視化</a></dd>
+    <dd id="nProgIso"><a href="ProgramIso.html">等値面の可視化</a></dd>
+    <dd id="nProg06"><a href="Program06.html">可視化パイプライン</a></dd>
+    <dd id="nProg07"><a href="Program07.html">レイキャスティングの実装</a></dd>
+    <dd id="nProg08"><a href="Program08.html">PBVRの実装</a></dd>
+    <dd id="nAppendix"><a href="Appendix.html">付録：プログラム集（仮）</a></dd>
+  </dl>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#sidebar -->
+
+  <div id="main">
+  <!-- InstanceBeginEditable name="mainArea" -->
+  <p>物体を表示するためにはベクトルや行列の演算は必須です．KVSでは，2〜4次元の行列/ベクトルクラスが独自に定義されており，各クラスで用意されている四則演算メソッドを使って行列/ベクトルの演算を容易に行うことができます．</p>
+  <h2>ベクトルクラスについて</h2>
+  <p>ベクトルクラスを使用する際には，使用する次数 N ( N = 2, 3, 4 ) に応じて<strong>ヘッダをインクルード</strong>します．</p>
+  <table border="0" frame="void">
+    <tr>
+      <td width="190">ベクトルのクラスのためのヘッダ</td>     
+      <td width="161">#include &lt;kvs/Vector<em>N</em>&gt;</td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <p>また，変数を宣言する場合には型T ( T = i, ui, f, d )　に応じて</p>
+  <table border="0" frame="void">
+    <tr>
+      <td width="190">ベクトル型変数　x</td>
+      
+      <td width="161">kvs::Vector<em>NT</em>   x;</td>
+    </tr>
+  </table>
+<p>で宣言します．</p>
+<p>ここで上述の省略形が許されているのは，</p>
+<table width="173" border="0" frame="void">
+  <tr>
+    <td width="9">&nbsp;</td>
+    <td width="38">i</td>
+    <td width="112">int 型</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>ui</td>
+    <td>unsigned int 型</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>f</td>
+    <td>float 型</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>d</td>
+    <td>double 型</td>
+  </tr>
+</table>
+<p>のみです．</p>
+<p>また，以上の省略型以外に，int型，float型，unsigned int型に対して，次の省略形が使用できます．</p>
+<table width="183" border="0" frame="void">
+  <tr>
+    <td width="9">&nbsp;</td>
+    <td width="48">VecN</td>
+    <td width="112">float 型</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>VecNi</td>
+    <td>int 型</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td>VecNui</td>
+    <td>unsigned int 型</td>
+  </tr>
+</table>
+
+<p>KVS内でtypdef によって省略形が定義されているだけで，</p>
+<code>
+<pre class="prettyprint lang-cpp">
+kvs::Vector3f a;
+kvs::Vec3 a;
+</pre></code>
+<p>は</p>
+<code>
+<pre class="prettyprint lang-cpp">
+kvs::Vector3&lt;float &gt; a;</pre></code>
+<p>と書いても同じことを意味します．</p>
+
+<p>従って，それ以外の型を宣言したい場合は，</p>
+<code>
+<pre class="prettyprint lang-cpp">
+kvs::Matrix33&lt;unsigned char&gt; b;</pre></code>
+<p>のように記述します．</p>
+
+<!--- ベクトルクラスについて --->
+<h3>ベクトルクラスのもつメソッド</h3>
+<p>ベクトルクラスに用意されているメソッドは他に以下のようなものがあります．</p>
+<p>実際には，</p>
+<p class="pRed">　(KVSのソースをダウンロードしたディレクトリ) kvs-src/Source/Core/Matrix/Vector3.h</p>
+<p>を見てみて下さい．ここでは，各メソッドについて使い方を説明します．</p>
+<h4>コンストラクタ</h4>
+<p>int型のベクトルkvs::Vector3i を作成する方法としては以下のように4種類用意されています．</p>
+<p>※初期値を指定しないでオブジェクトを生成した場合には，初期値 0 が入ります．</p>
+<code>
+<pre class="prettyprint lang-cpp">
+// 初期値を指定しない
+kvs::Vector3i a;
+
+// x, y, z 成分を１つ１つ記述する
+kvs::Vector3i b( 1, 2, 0 );
+
+// 2次元のベクトル(kvs::Vector2)とz成分を指定する
+kvs::Vector2i t( 1, 1 );      // 2次元のint型ベクトル
+kvs::Vector3i c( t, 3 );
+
+// 3次元配列を代入する
+int element[3] = { 1, 2, 3 };
+kvs::Vector3i d( element );
+</pre></code>
+<h4>値の代入：　演算子 [ ], 　zero( ),　 set( )</h4>
+<p>配列と同様に演算子[ ] を使えるほか，全成分を零にするメソッド zero( ) や値を代入するメソッド set( ) があります．</p>
+<p>また，set( ) は引数の渡し方によってオーバーロードされています．</p>
+<code>
+<pre class="prettyprint lang-cpp">
+// 演算子 [ ] で値を代入する
+a[0] = 1;        a[1] = 10;        a[2] =5;
+ 
+// 成分すべてを零にする
+a.zero( );
+ 
+// x, y, z 成分を１つ１つ指定する
+a.set( 1, 2, 2 );
+ 
+// 2次元のベクトル ( kvs::Vector2 ) と z 成分を指定する
+kvs::Vector2i t( 1, 1 );　　　　
+a.set( t, 5 );
+ 
+// 3次元配列を代入する
+int element[3] = { 1, 2, 3 };
+a.set( element );
+</pre></code>
+
+<h4>全成分をクリアするための静的メンバ関数：　Zero( ), All( )</h4>
+<p>インスタンス化なしに使える静的なメンバ関数として，Zero( ) は全成分を零とし，All( ) は全成分を引数で与えた値にする関数があります．</p>
+<code>
+<pre class="prettyprint lang-cpp">
+//全ての成分を零に指定する
+a = kvs::Vector3f::Zero( );
+ 
+//全ての成分を 3 に指定する
+a = kvs::Vector3f::All( 3.0 );
+</pre></code>
+
+<h4>値の取得：　 演算子[ ], 　x( ),　 y( ),　 z( )</h4>
+<p>代入と同様に演算子 [ ] が使えるほか，ベクトルの x, y, z 成分を取得するメソッド x( ), y( ), z( )  があります．</p>
+<code><pre class="prettyprint lang-cpp">
+// 演算子 [ ] をつかう
+int x0, y0, z0;
+x0 = a[0];        y0 = a[1];        z0 = a[2];
+ 
+// 成分を指定して表示する
+std::cout &lt;&lt; a.x( ) &lt;&lt; &quot;,  &quot; &lt;&lt; a.y( ) &lt;&lt; &quot;,  &quot; &lt;&lt; a.z( ) &lt;&lt; std::endl;
+</pre>
+</code>
+<h4>標準出力：　print( ),　 出力演算子&lt;&lt;</h4>
+<p>ベクトルの成分を：</p>
+<p class="code">1 2 3</p>
+<p>のように標準出力させるメソッド print( ) と，出力演算子&lt;&lt; があります．</p>
+<code>
+<pre class="prettyprint lang-cpp">
+a.print( );
+std::cout << a;
+</pre></code>
+<p>は同じように標準出力されます．</p>
+
+<h4>正規化：　normalize( )，normalized( )　</h4>
+<p>ベクトルを正規化するメソッドには，次の2種類あります．</p>
+<p>normalize( ) は自身を上書きして正規化しますが，</p>
+<p>normalized( )はVector3 型の値を戻り値にし，自身を変更しません．</p>
+
+<code>
+<pre class="prettyprint lang-cpp">
+// 自身を正規化
+kvs::Vector3d x( 1.0, 2.0, 3.0 );
+x.normalize( );
+ 
+// 正規化した値を返す（自身を変更しない）
+kvs::Vector3d y( 1.0, 2.0, 3.0 );
+kvs::Vector3d z = y.normalized( );
+</pre></code>
+
+<h4>長さ：　length( ), length2( ) </h4>
+<p>ベクトルの長さ，長さの２乗を返すメソッド length( ), length2( ) があります．</p>
+<p>また，length( ) はdouble型の値を戻り値にします．</p>
+<code>
+<pre class="prettyprint lang-cpp">
+// ベクトルの長さを返す
+double v = y.length( );
+ 
+// ベクトルの長さの２乗を返す
+double w = y.length2( );
+</pre></code>
+
+<h4>四則演算子：　+, 　-, 　*,　 /</h4>
+<p>演算子 + (+=) はベクトルの成分同士の足し算を行います．</p>
+<p>演算子 - ( -= ) も同様です．また，オブジェクトに - をつけると各成分に - をつけたベクトルになります．</p>
+<code><pre class="prettyprint lang-cpp">
+a.set( 1, 1, 1 );
+b.set( 3, 4, 5 );
+c = a + b;
+a+=c;
+a -= b;
+std::cout &lt;&lt; -a &lt;&lt; std::endl;</pre>
+</code>
+<p>演算子 * ( *= ) はベクトルの成分同士，スカラーとベクトルの各成分のかけ算の２種類があります．</p>
+<p>変数とベクトルのかけ算では，複合演算子 *= を用いる場合にはスカラーとベクトルの順番に注意して下さい．</p>
+<code>
+<pre class="prettyprint lang-cpp">
+ // ベクトルの成分同士のかけ算
+a*=b;
+// 変数とベクトルのかけ算
+int i = 10;
+c = i*b;
+c = b*i;   // 同じ値になります
+c *= i;    // 計算可能です
+<font class="pRed">i *= c;         // !!! エラーになります !!!</font>
+</pre></code>
+<p>演算子 / (/= ) はベクトルとスカラーの割り算です．</p>
+<p>各成分をスカラーで割り算します．</p>
+<p>かけ算の時と同様に，割り算の場合には，変数とベクトルの順番に注意して下さい．</p>
+<code>
+<pre class="prettyprint lang-cpp">
+d = c/i;
+c /= i;
+d = i/c; 　　  // !!! エラーになります !!!
+i/=c; 　　　　// !!! エラーになります !!!</span>
+</pre></code>
+<h4>内積：　dot( )，　外積：　cross( ) ，　交換：　swap( )</h4>
+<p>内積は演算子 * ではなくメソッド dot( ) を使い，外積はメソッド cross( ) を使います．</p>
+<p>また，ベクトルの値を交換するメソッド swap( ) があります．</p>
+<code><pre class="prettyprint lang-cpp">
+// 内積
+int dot = a.dot( b );
+// 外積
+c = a.cross( b );
+// 入れ替え
+x.swap( y );
+</pre></code>
+<h4>関係演算子：　==,　 !=</h4>
+<p>ベクトル同士が等しいか（各成分の値がすべて一致するか）どうかを判定する関係演算子があります．</p>
+<p>戻り値は bool型です．</p>
+<code>
+<pre class="prettyprint lang-cpp">
+// 値が等しいかどうか
+if( a == b ) {
+    std::cout &lt;&lt; &quot;a == b&quot; &lt;&lt; std::endl;
+} else if( a != b ) {
+    std::cout &lt;&lt; &quot;a != b&quot; &lt;&lt; std::endl; 
+}
+</pre>
+</code>
+<p>以上の内容をまとめたプログラム：　<a href="Program/VectorTest.tgz">VectorTest.tgz</a></p>
+<p><br />
+</p>
+<a name="sec2"></a>
+<h2>例　３次元ベクトルの演算  </h2>
+
+<p>２つの３次元ベクトル： <br />
+  <strong><em>x</em></strong> = [1, 0, 0]<Sup>T</Sup>, <strong><em>y</em></strong> = [2, 1, 1]<Sup>T</Sup><br />
+  を用いて和，差，内積，外積を計算するプログラムを作成します． </p>
+<p>C言語的に書くと：　<a href="Program/Vector_C.tgz">Vector_C.tgz </a></p>
+<code>
+<pre class="prettyprint lang-cpp">
+#include &lt;iostream&gt;
+int main( void )
+{
+   double x[3] = { 1.0, 0.0, 0.0 };
+   double y[3] = { 2.0, 1.0, 1.0 };
+ 
+   // 和
+   double sum[3];
+   sum[0] = x[0] + y[0];
+   sum[1] = x[1] + y[1];
+   sum[2] = x[2] + y[2];
+   std::cout &lt;&lt; &quot;x + y = ( &quot; &lt;&lt; sum[0] &lt;&lt; &quot; &quot; &lt;&lt; sum[1] &lt;&lt; &quot; &quot; &lt;&lt; sum[2] &lt;&lt; &quot; )&quot; &lt;&lt; std::endl;   
+   
+   // 差
+   double dif[3];
+   dif[0] = x[0] - y[0];
+   dif[1] = x[1] - y[1];
+   dif[2] = x[2] - y[2];
+    std::cout &lt;&lt; &quot;x - y = (  &quot; &lt;&lt; dif[0] &lt;&lt; &quot;  &quot; &lt;&lt; dif[1] &lt;&lt; &quot;  &quot; &lt;&lt; dif[2] &lt;&lt; &quot; )&quot; &lt;&lt; std::endl;
+   
+   // 内積  
+   double prd = x[0]*y[0] + x[1]*y[1] + x[2]*y[2];
+   std::cout &lt;&lt; &quot;x dot y = &quot; &lt;&lt; prd &lt;&lt; std::endl;
+   
+   // 外積
+   double crs[3];
+   crs[0] = x[1]*y[2] - x[2]*y[1];
+   crs[1] = x[2]*y[0] - x[0]*y[2];
+   crs[2] = x[0]*y[1] - x[1]*y[0];
+   std::cout &lt;&lt; &quot;x cross y = ( &quot; &lt;&lt; crs[0] &lt;&lt; &quot; &quot; &lt;&lt; crs[1] &lt;&lt; &quot; &quot; &lt;&lt; crs[2] &lt;&lt; &quot; )&quot; &lt;&lt; std::endl;
+
+   return ( 0 );
+}  
+</pre>
+</code>
+
+
+<p>のようになります．</p>
+<p>このプログラムをKVSクラスを使って書き換えてみましょう．</p>
+<p>&nbsp;</p>
+<h3>1.　作業ディレクトリの作成</h3>
+<p>作業ディレクトリに「Vector」というディレクトリを作成して，移動して下さい． </p>
+<p class="code">$ mkdir   Vector</p>
+<p class="code">$ cd Vector </p>
+
+<p>&nbsp;<p>
+<h3>2.　main.ccp の作成</h3>
+<p>「main.cpp」というファイルを作成して下さい．</p>
+<p>ここでは，3次元ベクトルを使用するために&lt;kvs/Vector3&gt;をインクルードします．</p>
+<pre class="prettyprint lang-cpp">
+#include &lt;kvs/Vector3&gt;
+ 
+int main( void )
+{
+   return ( 0 );
+}
+</pre></pre>
+
+<p>&nbsp;</p>
+<h3>3.　kvs::Vectorクラス</h3>
+<p><strong><em>x</em></strong>を3次元double型のベクトルとして宣言します．</p>
+<p>クラス名は<span class="pRed">kvs::Vector3d </span>となり，ここで，3は次元数，d はdouble型を表しています．</p>
+<pre class="prettyprint lang-cpp">
+kvs::Vector3d  x;
+</pre></pre>
+<p>定義した変数に値を代入します．kvs::VectorクラスではC言語の配列と同様に添字演算子[]を用いて値を代入することができます．</p>
+<pre class="prettyprint lang-cpp">
+x[0] = 1.0;　x[1] = 0.0;　x[2] = 0.0;
+</pre></pre>
+<p>kvs::Vectorクラスではコンストラクタを用いて変数宣言と同時に値を代入することができます．</p>
+<pre class="prettyprint lang-cpp">
+kvs::Vector3d y( 2.0, 1.0, 1.0 );
+</pre></pre>
+
+<p>&nbsp;</p>
+<h3>4.　和，差，内積，外積の計算</h3>
+<p> kvs::Vectorクラスにメソッドとして定義してあるため，それらを利用して簡単に計算することができます．</p>
+<pre class="prettyprint lang-cpp">
+// 和
+kvs::Vector3d sum = x + y;
+// 差
+kvs::Vector3d dif = x - y;
+// 内積
+double prd = x.dot( y );
+// 外積
+kvs::Vector3d crs = x.cross( y );
+</pre></pre>
+
+<p>&nbsp;</p>
+<h3>5.　ベクトルの出力</h3>
+<p>  ベクトルの出力をするための<span class="pRed">演算子&lt;&lt;</span> も定義されています． </p>
+<pre class="prettyprint lang-cpp">
+std::cout &lt;&lt; x &lt;&lt; std::endl;
+</pre></pre>
+<p>&nbsp;</p>
+<h3>6.　まとめ</h3>
+<p>以上をまとめたプログラムはこちら：　<a href="Program/Vector.tgz">Vector.tgz</a></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>7.　コンパイルと実行</h3>
+<p>作成したプログラムをコンパイル，実行してみましょう．</p>
+<p>KVSプログラムをコンパイルするためにはkvsmakeコマンドを用いてMakefileを作成すると簡単にコンパイルを行うことができます．</p>
+<p class="code">$ kvsmake -G　　　　　　　　　　&lt;-- Makefile の作成</p>
+<p class="code">$ kvsmake　　　　　　　　　　　　&lt;-- コンパイル</p>
+<p>エラーなくコンパイルできたら，実行してみましょう．</p>
+<p>以下のような実行結果が得られると思います．</p>
+<p class="code">$ ./Vector　　　　　　　　　　　　　　	&lt;-- Windows環境ではVector.exe となります</p>
+<p class="code">x + y = ( 3 1 1 )</p>
+<p class="code">x - y = ( -1 -1 -1 )</p>
+<p class="code">x dot y =  2</p>
+<p class="code">x cross y = ( 0 -1 1 )</p>
+<p></p>
+<p>&nbsp;</p>
+<p>以上のように，KVSではベクトルを扱うことができます．</p>
+<p>&nbsp;</p>
+
+<p align="right">Modefied at June 25, 2014</p>
+<p align="right">at April 17, 2017</p>
+
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#main -->
+
+  <div id="fotter">
+    <p><a href="index.html">TOP</a>　</p>
+  </div>
+  <!-- end div#fotter -->
+    
+</div>
+<!-- end div#wrapper -->
+
+</body>
+<!-- InstanceEnd --></html>

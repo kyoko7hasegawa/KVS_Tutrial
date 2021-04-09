@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>KVS Programming Guide</title>
+<!-- InstanceEndEditable -->
+<link href="base.css" rel="stylesheet" type="text/css" media="screen, tv, projection" />
+<!-- Code 装飾用 Google google-code-prettify -->
+<!--<link rel="stylesheet" type="text/css" href="code-prettify/src/prettify.css">-->
+<!--<link rel="stylesheet" type="text/css" href="../code-prettify/styles/desert.css">-->
+<link rel="stylesheet" type="text/css" href="code-prettify/styles/tomorrow-night-blue.css">
+<script type="text/javascript" src="code-prettify/src/prettify.js"></script>
+<script type="text/javascript" src="code-prettify/src/lang-css.js"></script>
+<!-- ここまで -->
+
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<!-- InstanceParam name="id" type="text" value="Prog03" -->
+</head>
+
+<body onload="PR.prettyPrint()" id="Prog03">
+<div id="wrapper">
+  <div id="header">
+    <h1>KVS vsrsion 2.x Tutorial</h1>
+    <p>&nbsp;</p>
+    <p align="right"> kvs version 2.9</p>
+    <p align="right">kvs : <a href=" https://github.com/naohisas/KVS" target="_blank"> https://github.com/naohisas/KVS</a></p>
+  </div>
+  <!-- end div#header -->
+  
+  <div id="sidebar">
+  <!-- InstanceBeginEditable name="sidebarArea" -->
+  <dl>
+    <dd id="nInstall"><a href="install.html">インストール</a></dd>
+    <dd id="nBasis"><a href="basis.html">基本的な使い方</a></dd>
+    <dd id="nTransFunc"><a href="transFunc.html">伝達関数を調整する</a></dd>
+    <dd id="nDICOM"><a href="DICOM.html">DICOMデータを読み込む</a></dd>
+  </dl>
+  <p><strong><br />
+  </strong></p>
+  <p><strong> <a href="Program.html">KVSプログラムの作成</a></strong></p>
+  <dl>
+    <dd id="nProg01"><a href="Program01.html">3次元ベクトルの演算</a></dd>
+    <dd id="nProgMatrix"><a href="ProgramMatrix.html">行列クラス</a></dd>
+    <dd id="nProg02"><a href="Program02.html">行列の演算（行列クラスの応用）</a></dd>
+    <dd id="nProgRandom"><a href="ProgramRandom.html">乱数生成</a></dd>
+    <dd id="nProg03"><a href="Program03.html">オブジェクトについて</a></dd>
+        <dt>オブジェクト</dt>
+        <dt><a href="#sec2">FLDファイル</a></dt>
+        <dt><a href="#sec3">問題　ボリュームデータの記述</a></dt>    
+    <dd id="nProg04"><a href="Program04.html">構造型ボリュームデータの作成</a></dd>
+    <dd id="nProg05"><a href="Program05.html">面データの可視化</a></dd>
+    <dd id="nProgIso"><a href="ProgramIso.html">等値面の可視化</a></dd>
+    <dd id="nProg06"><a href="Program06.html">可視化パイプライン</a></dd>
+    <dd id="nProg07"><a href="Program07.html">レイキャスティングの実装</a></dd>
+    <dd id="nProg08"><a href="Program08.html">PBVRの実装</a></dd>
+    <dd id="nAppendix"><a href="Appendix.html">付録：プログラム集（仮）</a></dd>
+  </dl>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#sidebar -->
+
+  <div id="main">
+  <!-- InstanceBeginEditable name="mainArea" -->
+  <h2>オブジェクト</h2>
+  <p>KVS内で効率的にデータを扱うために様々な<span class="pRed">データ構造（object）</span>が用意されています．</p>
+  <p>KVSで定義されているObject には幾何学形状を扱うための</p>
+  <p>　　点データ（PointObject），</p>
+  <p>　　線データ（LineObject），</p>
+  <p>　　面データ（PolygonObject）<br />
+  </p>
+  <p>ボリュームデータを扱うための</p>
+  <p>　　構造型ボリュームデータ（StructuredVolumeObject），</p>
+  <p>　　非構造型ボリュームデータ（UnstructuredVolumeObject）</p>
+  <p>が用意されています．</p>
+  <p></p>
+<center>
+<p>&nbsp;</p>
+<table width="72%" border="0">
+  <tr>
+    <td width="26%" align="center"><img src="img/PointObject.png" width="70" height="70" alt="PointObject" /></td>
+    <td width="32%" align="center"><img src="img/LineObject.png" width="100" height="100" alt="LineObject" /></td>
+    <td width="42%" align="center"><img src="img/PolygonObject.png" width="75" height="75" alt="PolygonObject" /></td>
+  </tr>
+  <tr>
+    <td align="center">PointObject</td>
+    <td align="center">LineObject</td>
+    <td align="center">PolygonObject</td>
+  </tr>
+  <tr>
+    <td align="center">点群データ</td>
+    <td align="center">線データ</td>
+    <td align="center">面データ</td>
+  </tr>
+</table>
+<table width="74%" border="0">
+  <tr>
+    <td align="center"><img src="img/StructuredVolumeObject.png" width="100" height="100" alt="StructuredVolumeObject" /></td>
+    <td align="center"><img src="img/UnstructuredVolumeObject.png" width="110" height="100" alt="UnstructuredVolumeObject" /></td>
+  </tr>
+  <tr>
+    <td align="center">StructuredVolumeObject</td>
+    <td align="center">UnstructuredVolumeObject</td>
+  </tr>
+  <tr>
+    <td align="center">構造型ボリュームデータ</td>
+    <td align="center">非構造型ボリュームデータ</td>
+  </tr>
+</table>
+</center>
+<p>&nbsp;</p>
+<a name="sec2"></a>
+<h2>FLDファイル</h2>
+<p>CG研で多く使われているボリュームデータはAVS Fieldファイルといい，</p>
+<p>拡張子が『.fld』であることから"FLDファイル"と呼んでいます．</p>
+<p>FLDファイルは以下のような形式で記述されています．</p>
+<div class="DataFile">
+  <p>ndim   = 3	　　// 空間の次元数</p>
+  <p>dim1   = 2	　　// x軸方向のグリッド数</p>
+  <p>dim2   = 2	　　// y軸方向のグリッド数</p>
+  <p>dim3   = 2	　　// z軸方向のグリッド数</p>
+  <p>nspace = 3	　　　 // 各軸の次元サイズ</p>
+  <p>veclen = 1	　　　　 // 各要素のデータ数（スカラーデータならば１）</p>
+  <p>data   = double	　　// データの型</p>
+  <p>field  = uniform	　 // ボリュームデータのフィールドタイプ（座標情報）</p>
+  <p>^L^L…以下フィールド値….<br />
+  </p>
+</div>
+<p></p>
+<a name="sec3"></a>
+<h3>問題　ボリュームデータの記述について</h3>
+<p>上述では，FLDファイルの記述方法について簡単に述べています．それぞれの変数（ndim, dim1, vecle 等）について詳細を調べなさい．</p>
+<p>ＫＶＳでは，ボリュームデータの記述形式として</p>
+<ul>
+  <li>・KVSML ( KVＳ独自のファイルフォーマット)</li>
+  <li>・AVS Field </li>
+  <li>・AVS UCD</li>
+</ul>
+<p>に対応しています．それぞれのファイル形式について調査しましょう．</p>
+<p>また，ボリュームデータ可視化ソフトについて</p>
+<ul>
+  <li>どのようなソフトウェアがあるのか</li>
+  <li>どのようなファイルが入力できるのか</li>
+  <li>どのような絵が描けるのか</li>
+  <li></li>
+</ul>
+<p>調査してみましょう．</p>
+<p>（例えば，ＣＧ研にはMicroAVS（サイバネット社）があります）</p>
+<p align="right">Modefied at July 2, 2013  </p>
+<p align="right">at April 21, 2017  </p>
+
+  <p>&nbsp;</p>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#main -->
+
+  <div id="fotter">
+    <p><a href="index.html">TOP</a>　</p>
+  </div>
+  <!-- end div#fotter -->
+    
+</div>
+<!-- end div#wrapper -->
+
+</body>
+<!-- InstanceEnd --></html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>KVS Programming Guide</title>
+<!-- InstanceEndEditable -->
+<link href="base.css" rel="stylesheet" type="text/css" media="screen, tv, projection" />
+<!-- Code 装飾用 Google google-code-prettify -->
+<!--<link rel="stylesheet" type="text/css" href="code-prettify/src/prettify.css">-->
+<!--<link rel="stylesheet" type="text/css" href="../code-prettify/styles/desert.css">-->
+<link rel="stylesheet" type="text/css" href="code-prettify/styles/tomorrow-night-blue.css">
+<script type="text/javascript" src="code-prettify/src/prettify.js"></script>
+<script type="text/javascript" src="code-prettify/src/lang-css.js"></script>
+<!-- ここまで -->
+
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<!-- InstanceParam name="id" type="text" value="Prog07" -->
+</head>
+
+<body onload="PR.prettyPrint()" id="Prog07">
+<div id="wrapper">
+  <div id="header">
+    <h1>KVS vsrsion 2.x Tutorial</h1>
+    <p>&nbsp;</p>
+    <p align="right"> kvs version 2.9</p>
+    <p align="right">kvs : <a href=" https://github.com/naohisas/KVS" target="_blank"> https://github.com/naohisas/KVS</a></p>
+  </div>
+  <!-- end div#header -->
+  
+  <div id="sidebar">
+  <!-- InstanceBeginEditable name="sidebarArea" -->
+  <dl>
+    <dd id="nInstall"><a href="install.html">インストール</a></dd>
+    <dd id="nBasis"><a href="basis.html">基本的な使い方</a></dd>
+    <dd id="nTransFunc"><a href="transFunc.html">伝達関数を調整する</a></dd>
+    <dd id="nDICOM"><a href="DICOM.html">DICOMデータを読み込む</a></dd>
+  </dl>
+  <p><strong><br />
+  </strong></p>
+  <p><strong> <a href="Program.html">KVSプログラムの作成</a></strong></p>
+  <dl>
+    <dd id="nProg01"><a href="Program01.html">3次元ベクトルの演算</a></dd>
+    <dd id="nProgMatrix"><a href="ProgramMatrix.html">行列クラス</a></dd>
+    <dd id="nProg02"><a href="Program02.html">行列の演算（行列クラスの応用）</a></dd>
+    <dd id="nProgRandom"><a href="ProgramRandom.html">乱数生成</a></dd>
+    <dd id="nProg03"><a href="Program03.html">オブジェクトについて</a></dd>
+    <dd id="nProg04"><a href="Program04.html">構造型ボリュームデータの作成</a></dd>
+    <dd id="nProg05"><a href="Program05.html">面データの可視化</a></dd>
+    <dd id="nProgIso"><a href="ProgramIso.html">等値面の可視化</a></dd>
+    <dd id="nProg06"><a href="Program06.html">可視化パイプライン</a></dd>
+    <dd id="nProg07"><a href="Program07.html">レイキャスティングの実装</a></dd>
+     <dt>例　レイキャスティング</dt>
+    <dd id="nProg08"><a href="Program08.html">PBVRの実装</a></dd>
+    <dd id="nAppendix"><a href="Appendix.html">付録：プログラム集（仮）</a></dd>
+  </dl>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#sidebar -->
+
+  <div id="main">
+  <!-- InstanceBeginEditable name="mainArea" -->
+  <h2>例　ボリュームデータのレイキャスティング</h2>
+  <p>構造型ボリュームデータをインポートしてレイキャスティング法でレンダリングしてみましょう．</p>
+  <p>ここで用いる可視化パイプラインは</p>
+  <ul>
+    <li>Importer ：StructuredVolumeImporter</li>
+    <li>Renderer：RayCastingRenderer</li>
+  </ul>
+  <p>を用います．</p>
+  <p>データをそのまま使うため，FilterとMapperはここでは使用しません．</p>
+  <p>&nbsp;</p>
+  <center>
+  <p><img src="img/rei4.5.png" width="595" alt="PipeLine_RayCastingRenderer" /></p>
+  <p>可視化パイプライン</p>
+  </center>
+  <p>&nbsp;</p>
+  <h3>1.　作業ディレクトリの作成</h3>
+  <p>作業ディレクトリに「RayCasting」というディレクトリを作成して，移動して下さい． <br />
+  </p>
+  <p class="code">$ mkdir   RayCasting</p>
+  <p class="code">$ cd RayCasting </p>
+  <h3>&nbsp;</h3>
+  <h3>2.　main.ccp の作成</h3>
+  <p>「main.cpp」というファイルを作成して下さい．</p>
+  <p>プログラム実行の際にコマンドライン引数としてファイルを読み込むようにするため，引数のチェックをします． </p>
+<code><pre class="prettyprint lang-cpp">
+int main( int argc, char** argv )
+{
+   if( !(argc == 2 ) ) {
+　    std::cerr &lt;&lt; &quot;USAGE (1): ./RayCasting volume_data&quot; &lt;&lt; std::endl;
+      exit(1) ;
+   }
+   return ( 0 );
+}
+</pre></code>
+  <p></p>
+  <p>&nbsp;</p>
+  <h3>3.　構造型ボリュームデータのImport</h3>
+  <p>コマンドライン引数として与えられたファイル名をインポート（<span class="pRed">kvs::StructuredVolumeImporter</span>）して構造型ボリュームデータ（<span class="pRed">kvs::StructuredVolumeObject</span>）へ変換します．</p>
+  <p>また，このとき正しくファイルが読み込めたのかチェックします．</p>
+<code><pre class="prettyprint lang-cpp">
+kvs::StructuredVolumeObject* object
+      = new kvs::StructuredVolumeImporter( std::string( argv[1] ) );
+if ( !object ) {	// ファイルが正しく読み込めたのかチェック
+   kvsMessageError( "Cannot create a structured volume object." );
+   return( false );
+}
+</pre></code>
+  <p></p>
+  <h3>4.　Renderer の作成</h3>
+  <p>Renderer を作成します．ここでは，Renderer に<span class="pRed">kvs::RayCastingRenderer</span>を選択しています．</p>
+  <p>また，正しくRendererが作成できたかをチェックします．</p>
+<code><pre class="prettyprint lang-cpp">
+kvs::RayCastingRenderer* renderer = new kvs::RayCastingRenderer();
+if ( !renderer ) {
+   kvsMessageError( "Cannot create a ray casting renderer." );
+   delete object;
+   return( false );
+}
+</pre></code>
+  <h3>5.　描画</h3>
+  <p>GLUTによる可視化処理を行います．</p>
+  <p><span class="pRed">kvs::glut::Application</span>と<span class="pRed">kvs::glut::Screen</span>により，ウィンドウの初期化や記イベントの登録を行います．</p>
+  <p>ここでは，Screenクラスのメソッド<span class="pRed"> registerObjectへObjectだけではなく，Renderer も登録</span>していることに注意して下さい．これにより，ユーザが作成・設定したRenderer を用いて描画処理を行うことが可能になります．</p>
+<code><pre class="prettyprint lang-cpp">
+kvs::glut::Application app( argc, argv );
+kvs::glut::Screen screen( &app );
+
+// ScreenクラスにオブジェクトとRendererを登録
+screen.registerObject( object, renderer );
+
+screen.setGeometry( 0, 0, 512, 512 );
+screen.setTitle( "RayCastingRenderer" );
+screen.show();
+ 
+return( app.run() );
+</pre></code>
+  <p></p>
+  <p></p>
+  <p></p>
+  <h3>6.　ヘッダファイル</h3>
+  <p>使用したKVSクラスをインクルードします．</p>
+  <p>ここでは，</p>
+  <ul>
+    <li>kvs::StructuredVolumeImporter</li>
+    <li> kvs::StructuredVolumeObject</li>
+    <li> kvs::RayCastingRenderer</li>
+    <li>kvs::glut::Screen</li>
+    <li>kvs::glut::Application</li>
+  </ul>
+  <p>を使いました． </p>
+<code><pre class="prettyprint lang-cpp">
+#include &lt;kvs/StructuredVolumeObject&gt;
+#include &lt;kvs/StructuredVolumeImporter&gt;
+#include &lt;kvs/RayCastingRenderer&gt;
+#include &lt;kvs/glut/Application&gt;
+#include &lt;kvs/glut/Screen&gt;
+</pre></code>
+  <p></p>
+  <h3>7.　まとめ</h3>
+  <p>以上をまとめたプログラムはこちら：　<a href="./Program/RayCasting.tgz">RayCasting.tgz</a></p>
+  <p>※　このフォルダ内にはテスト用ボリュームデータ</p>
+  <ul>
+    <li>＊　test.fld</li>
+    <li>＊　hydrogen.kvsml</li>
+    <li>＊　lobster.fld</li>
+    </ul>
+  <p>が入っています．  </p>
+  <p>&nbsp;</p>
+<h3>8.　コンパイルと実行</h3>
+  <p>作成したプログラムをコンパイル，実行してみましょう．</p>
+  <p>KVSプログラムをコンパイルするためにはkvsmakeコマンドを用いてMakefileを作成すると簡単にコンパイルを行うことができます．</p>
+  <p class="code">$ kvsmake -G　　　　　　　　　　&lt;-- Makefile の作成</p>
+  <p class="code">$ kvsmake　　　　　　　　　　　　&lt;-- コンパイル</p>
+  <p>エラーなくコンパイルできたら，実行してみましょう．</p>
+  <p>実行すると，以下のような結果が得られます．  </p>
+  <p class="code">$ ./RayCasting　test.fld</p>
+  <p class="code">$ ./RayCasting　hydrogen.kvsml  </p>
+  <p>&nbsp;</p>
+  <center>
+  <p><img src="img/RayCas.png" width="250" alt="test.fld" />　　　<img src="img/RayCas2.png" width="250" alt="hydrogen.kvsml" /></p>
+  <p>test.fld　　　　　　　　　　　　　　　　　　　　　　　　　　　hydrogen.kvsml</p>
+  </center>
+  <p>&nbsp;</p>
+  <!--<h3>9.　GPUを利用した高速可視化ライブラリを使ってみよう</h3>
+  <p>インストールの際に追加ライブラリとしてGLEWをインストールしている場合にはGLEWを利用した</p>
+  <p>GPUによる高速なRendererを使うことができます．</p>
+  <p>この例で作成したプログラムを改良し，<span class="pRed">kvs::glew::RayCastingRenderer</span> を使ってレンダラを置き換えてみよう．</p>
+  <p>kvs::glew::RayCastingRenderer　を使用する場合には</p>
+  <p><span class="pRed">&lt;kvs/glew/RayCastingRenderer&gt; をインクルード</span>する必要があります．</p>
+  <p>レンダリング速度の違いについて体感してみよう，</p>-->
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p align="right">Modefied at June 16, 2013 </p>
+  <p align="right"> at April 27, 2017 </p>
+
+  <p>&nbsp;</p>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#main -->
+
+  <div id="fotter">
+    <p><a href="index.html">TOP</a>　</p>
+  </div>
+  <!-- end div#fotter -->
+    
+</div>
+<!-- end div#wrapper -->
+
+</body>
+<!-- InstanceEnd --></html>

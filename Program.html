@@ -1,0 +1,213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>KVS Programming Guide</title>
+<!-- InstanceEndEditable -->
+<link href="base.css" rel="stylesheet" type="text/css" media="screen, tv, projection" />
+<!-- Code 装飾用 Google google-code-prettify -->
+<!--<link rel="stylesheet" type="text/css" href="code-prettify/src/prettify.css">-->
+<!--<link rel="stylesheet" type="text/css" href="../code-prettify/styles/desert.css">-->
+<link rel="stylesheet" type="text/css" href="code-prettify/styles/tomorrow-night-blue.css">
+<script type="text/javascript" src="code-prettify/src/prettify.js"></script>
+<script type="text/javascript" src="code-prettify/src/lang-css.js"></script>
+<!-- ここまで -->
+
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<!-- InstanceParam name="id" type="text" value="NONE" -->
+</head>
+
+<body onload="PR.prettyPrint()" id="NONE">
+<div id="wrapper">
+  <div id="header">
+    <h1>KVS vsrsion 2.x Tutorial</h1>
+    <p>&nbsp;</p>
+    <p align="right"> kvs version 2.9</p>
+    <p align="right">kvs : <a href=" https://github.com/naohisas/KVS" target="_blank"> https://github.com/naohisas/KVS</a></p>
+  </div>
+  <!-- end div#header -->
+  
+  <div id="sidebar">
+  <!-- InstanceBeginEditable name="sidebarArea" -->
+  <dl>
+    <dd id="nInstall"><a href="install.html">インストール</a></dd>
+    <dd id="nBasis"><a href="basis.html">基本的な使い方</a></dd>
+    <dd id="nTransFunc"><a href="transFunc.html">伝達関数を調整する</a></dd>
+    <dd id="nDICOM"><a href="DICOM.html">DICOMデータを読み込む</a></dd>
+  </dl>
+  <p><strong><br />
+  </strong></p>
+  <p><strong> <a href="Program.html">KVSプログラムの作成</a></strong></p>
+  <dl>
+    <dd id="nProg01"><a href="Program01.html">3次元ベクトルの演算</a></dd>
+    <dd id="nProgMatrix"><a href="ProgramMatrix.html">行列クラス</a></dd>
+    <dd id="nProg02"><a href="Program02.html">行列の演算（行列クラスの応用）</a></dd>
+    <dd id="nProgRandom"><a href="ProgramRandom.html">乱数生成</a></dd>
+    <dd id="nProg03"><a href="Program03.html">オブジェクトについて</a></dd>
+    <dd id="nProg04"><a href="Program04.html">構造型ボリュームデータの作成</a></dd>
+    <dd id="nProg05"><a href="Program05.html">面データの可視化</a></dd>
+    <dd id="nProgIso"><a href="ProgramIso.html">等値面の可視化</a></dd>
+    <dd id="nProg06"><a href="Program06.html">可視化パイプライン</a></dd>
+    <dd id="nProg07"><a href="Program07.html">レイキャスティングの実装</a></dd>
+    <dd id="nProg08"><a href="Program08.html">PBVRの実装</a></dd>
+    <dd id="nAppendix"><a href="Appendix.html">付録：プログラム集（仮）</a></dd>
+  </dl>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#sidebar -->
+
+  <div id="main">
+  <!-- InstanceBeginEditable name="mainArea" -->
+  <h2>KVSプログラムの作成</h2>
+  <p>KVSを使ったプログラムを作成するには次の点に注意するとよいかも？</p>
+  <p>&nbsp;</p>
+  <h3>＊　クラス名と同じヘッダファイルをインクルードする</h3>
+  <p>　　例）kvs::Vector3d クラスを使いたい場合には</p>
+  <p>　　　　&lt;kvs/Vector3&gt; をインクルードする</p>
+  <p>&nbsp;</p>
+  <h3>＊　サンプルプログラムを参考にする</h3>
+  <p>　　　サンプルプログラムダウンロードしたソースファイルの中にたくさん用意されています．</p>
+  <p>　　　(ダウンロードの際に作成されたディレクトリ内の)/Example</p>
+  <p>　　というディレクトリ内にサンプルプログラムがあります．</p>
+  <p>&nbsp;</p>
+  <h3>＊　使用したいクラスにどんなメンバ関数があるのか知りたい場合</h3>
+  <p>　　　ソースファイルの中からヘッダファイルを探してみることがわかりやすいかと思います．</p>
+  <p>　　　ヘッダファイルは基本的にクラスメイト同じ名前で作成されています．</p>
+  <p>　　　ダウンロードの際に作成されたディレクトリ内の</p>
+  <p>　　　 　Source/Core</p>
+  <p>　　　内に存在しています．</p>
+  <p>　　　ファイルを探すコマンド find を使って，ダウンロードの際に作成されたディレクトリへ移動して</p>
+  <p class="code">$ find . -name &quot;探したいクラス名&quot;</p>
+  <p>　　　で探すと探せると思います．</p>
+<p>　　例） RayCastingRendererのメンバについて調べたい場合は</p>
+<p class="code">$ find . -name &quot;RayCastingRenderer*&quot;</p> 
+<p>  　　　　　でヘッダファイル
+RayCastingRenderer.h がどこにあるのか調べられます．</p>
+<p>　　　</p>
+<h2>KVS内で定義されている型</h2>
+<p>KVSでは，型の名前を以下のように名前を変えて使用しています．</p>
+<table width="80%" border="1">
+  <tr>
+    <th width="50%" scope="col"><p>KVS内での型名</p></th>
+    <th width="50%" scope="col"><p>KVS内での型名  C言語での型名</p></th>
+  </tr>
+  <tr>
+    <td align="center">kvs::Int8</td>
+    <td align="center">char
+</td>
+  </tr>
+    <tr>
+    <td align="center">kvs::UInt8</td>
+    <td align="center">unsigned char</td>
+  </tr>
+  <tr>
+    <td align="center">kvs::Int16</td>
+    <td align="center">short</td>
+  </tr>
+  <tr>
+    <td align="center">kvs::UInt16</td>
+    <td align="center">unsigned short
+</td>
+  </tr>
+  <tr>
+    <td align="center">kvs::Int32</td>
+    <td align="center">int</td>
+  </tr>
+  <tr>
+    <td align="center">kvs::UInt32</td>
+    <td align="center">unsigned int</td>
+  </tr>
+  <tr>
+    <td align="center">kvs::Real32</td>
+    <td align="center">float</td>
+  </tr>
+  <tr>
+    <td align="center">kvs::Real64</td>
+    <td align="center">double</td>
+  </tr>
+  <tr>
+    <td align="center">kvs::Real128</td>
+    <td align="center">long double</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<h2>このTutorial の構成</h2>
+<p>本 Tutorial は以下のような構成です．</p>
+<ul>
+  <li>
+    <h4><strong>＊3次元ベクトルの演算</strong></h4>
+  </li>
+  <li>　-- ベクトルクラスについて</li>
+  <li>　-- 例　３次元ベクトルの演算</li>
+  <li>
+    <h4><strong>＊行列クラス</strong></h4>
+  </li>
+  <li>　-- 行列クラスについて</li>
+  <li>
+    <h4>＊行列の演算（行列クラスの応用）</h4>
+  </li>
+  <li>　-- 例　行列の演算</li>
+  <li>　-- 問題　　標準系を求めよう </li>
+  <li>
+    <h4>＊乱数生成</h4>
+  </li>
+  <li>　-- 例　モンテカルロ法を使って円周率を求める</li>
+  <li>　-- 問題　円上にランダムに点を生成し，plot してみよう</li>
+  <li>
+    <h4>＊オブジェクトについて</h4>
+  </li>
+  <li>　-- オブジェクト</li>
+  <li>　-- FLDファイル</li>
+  <li>　-- 問題　ボリュームデータの記述について</li>
+  <li>
+    <h4>＊構造型ボリュームデータの作成</h4>
+  </li>
+  <li>　-- 例　構造型ボリュームデータ</li>
+  <li>　-- 問題　KVSML形式のボリュームデータを作成しよう</li>
+  <li>
+    <h4>＊面データの可視化</h4>
+  </li>
+  <li>　-- 例　面データの可視化</li>
+  <li>　-- 問題　ワイヤーフレーム表示</li>
+  <li>
+    <h4>＊等値面の可視化</h4>
+  </li>
+  <li> 　-- 例　等値面の可視化 </li>
+  <li>　-- 問題　複数等値面の描画</li>
+  <li>
+    <h4>＊可視化パイプライン</h4>
+  </li>
+  <li>　-- 可視化パイプライン</li>
+  <li>
+    <h4>＊レイキャスティングの実装</h4>
+  </li>
+  <li>　-- 例　ボリュームデータのレイキャスティング<br />
+  </li>
+  <li>
+    <h4>＊PBVRの実装</h4>
+  </li>
+  <li>　-- 例　粒子ベース・ボリュームレンダリングの実装</li>
+  <li>　-- 問題　可視化パイプラインを使ってプログラムを作ろう</li>
+  <li>
+    <h4>＊付録：プログラム集（仮）</h4>
+  </li>
+  </ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p align="right">Updated at April 12, 2017  </p>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#main -->
+
+  <div id="fotter">
+    <p><a href="index.html">TOP</a>　</p>
+  </div>
+  <!-- end div#fotter -->
+    
+</div>
+<!-- end div#wrapper -->
+
+</body>
+<!-- InstanceEnd --></html>

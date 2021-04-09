@@ -1,0 +1,283 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>KVS Programming Guide</title>
+<!-- InstanceEndEditable -->
+<link href="base.css" rel="stylesheet" type="text/css" media="screen, tv, projection" />
+<!-- Code 装飾用 Google google-code-prettify -->
+<!--<link rel="stylesheet" type="text/css" href="code-prettify/src/prettify.css">-->
+<!--<link rel="stylesheet" type="text/css" href="../code-prettify/styles/desert.css">-->
+<link rel="stylesheet" type="text/css" href="code-prettify/styles/tomorrow-night-blue.css">
+<script type="text/javascript" src="code-prettify/src/prettify.js"></script>
+<script type="text/javascript" src="code-prettify/src/lang-css.js"></script>
+<!-- ここまで -->
+
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<!-- InstanceParam name="id" type="text" value="ProgIso" -->
+</head>
+
+<body onload="PR.prettyPrint()" id="ProgIso">
+<div id="wrapper">
+  <div id="header">
+    <h1>KVS vsrsion 2.x Tutorial</h1>
+    <p>&nbsp;</p>
+    <p align="right"> kvs version 2.9</p>
+    <p align="right">kvs : <a href=" https://github.com/naohisas/KVS" target="_blank"> https://github.com/naohisas/KVS</a></p>
+  </div>
+  <!-- end div#header -->
+  
+  <div id="sidebar">
+  <!-- InstanceBeginEditable name="sidebarArea" -->
+  <dl>
+    <dd id="nInstall"><a href="install.html">インストール</a></dd>
+    <dd id="nBasis"><a href="basis.html">基本的な使い方</a></dd>
+    <dd id="nTransFunc"><a href="transFunc.html">伝達関数を調整する</a></dd>
+    <dd id="nDICOM"><a href="DICOM.html">DICOMデータを読み込む</a></dd>
+  </dl>
+  <p><strong><br />
+  </strong></p>
+  <p><strong> <a href="Program.html">KVSプログラムの作成</a></strong></p>
+  <dl>
+    <dd id="nProg01"><a href="Program01.html">3次元ベクトルの演算</a></dd>
+    <dd id="nProgMatrix"><a href="ProgramMatrix.html">行列クラス</a></dd>
+    <dd id="nProg02"><a href="Program02.html">行列の演算（行列クラスの応用）</a></dd>
+    <dd id="nProgRandom"><a href="ProgramRandom.html">乱数生成</a></dd>
+    <dd id="nProg03"><a href="Program03.html">オブジェクトについて</a></dd>
+    <dd id="nProg04"><a href="Program04.html">構造型ボリュームデータの作成</a></dd>
+    <dd id="nProg05"><a href="Program05.html">面データの可視化</a></dd>
+    <dd id="nProgIso"><a href="ProgramIso.html">等値面の可視化</a></dd>
+            <dt>例　等値面の可視化</dt>
+        <dt><a href="#sec2">問題　複数等値面の描画</a></dt>
+    <dd id="nProg06"><a href="Program06.html">可視化パイプライン</a></dd>
+    <dd id="nProg07"><a href="Program07.html">レイキャスティングの実装</a></dd>
+    <dd id="nProg08"><a href="Program08.html">PBVRの実装</a></dd>
+    <dd id="nAppendix"><a href="Appendix.html">付録：プログラム集（仮）</a></dd>
+  </dl>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#sidebar -->
+
+  <div id="main">
+  <!-- InstanceBeginEditable name="mainArea" -->
+
+  <h2>例　等値面の可視化  </h2>
+  <p>「<a href="Program04.html">例　構造型ボリュームデータの作成</a>」で作成した構造型ボリュームデータを改良して等値面を描画するプログラムを作成します．</p>
+<p>&nbsp;</p>
+  <h3>1.　作業ディレクトリの作成</h3>
+  <p>作業ディレクトリに「IsoSurface」というディレクトリを作成して，移動して下さい． <br />
+  </p>
+  <div class="code">
+    <p>$ mkdir   IsoSurface<br />
+    $ cd IsoSurface </p>
+  </div>
+  <p>&nbsp;</p>
+  <h3>2.　main.cpp の作成</h3>
+  <p>「<a href="Program04.html">例　構造型ボリュームデータの作成</a>」で作成したmain.cpp をコピーして，ファイルへエクスポートするところから下を削除して下さい．</p>
+<code><pre class="prettyprint lang-cpp">
+#include &lt;kvs/Vector3&gt;<br />#include &lt;kvs/StructuredVolumeObject&gt;<br />#include &lt;kvs/StructuredVolumeExporter&gt;<br />#include &lt;kvs/AVSField&gt;　
+inline float func( float x, float y, float z ) {
+    return ( 3.0 - x*x - y*y - 4.0*z*z );
+}
+ 
+int main( int argc, char** argv )
+{
+    // グリッドサイズ
+    kvs::UInt32 gridNum = 64;
+    const kvs::Vector3ui resol( gridNum, gridNum, gridNum );
+    // ボリュームデータの値を格納するためのメモリの割り当て
+    kvs::ValueArray&lt;float&gt; data( gridNum * gridNum * gridNum );
+    // dataにを操作するためのポインタ変数
+    float* pdata = data.data( );
+ 
+    float min = -2.0, max = 2.0;
+    float dt = (float)(max - min)/(float)(gridNum-1);
+ 
+    kvs::UInt64 index = 0;
+    for(int k=0; k&lt;gridNum; k++) {
+       for(int j = 0; j&lt;gridNum; j++) {
+          for(int i=0; i&lt; gridNum; i++) {
+             float x = (float)min + (float)i*dt;
+             float y = (float)min + (float)j*dt;
+             float z = (float)min + (float)k*dt;
+             // 関数値を評価してdataへ格納
+             pdata[ index++ ] = func(x, y, z) ;
+          }
+       }
+    }
+ 
+    size_t veclen = 1.0;
+    // 構造型ボリュームオブジェクトの作成
+    kvs::StructuredVolumeObject *volume = new kvs::StructuredVolumeObject();
+    volume-&gt;setGridType( kvs::StructuredVolumeObject::Uniform );
+    volume-&gt;setResolution( resol );
+    volume-&gt;setVeclen( veclen );
+    volume-&gt;setValues( data );
+</pre></code>
+  <p>&nbsp;</p>
+  <h3>3.　ボリュームデータの最小値と最大値を計算する</h3>
+  <p>kvs::StructuredVolumeObject が最小値・最大値をもっているかどうかは，</p>
+  <p>kvs::StructuredVolumeObject クラスのメソッド <span class="pRed">hasMinMaxValues()の値がtrueか false</span>かで知ることができます．</p>
+<p>もっていなかった場合は，ボリュームデータのもつ密度値 （values） の最小値・最大値を計算するメソッド</p>
+  <p class="pRed">updateMinMaxValues()</p>
+  <p>を実行して，最小値・最大値を計算します．</p>
+<code><pre class="prettyprint lang-cpp">
+// ボリュームデータが最大値・最小値をもっているかチェック
+if ( !volume-&gt;hasMinMaxValues() ) 
+   volume-&gt;updateMinMaxValues();	// もっていなければ計算する
+</pre></code>
+  <p>&nbsp;</p>
+  <h3>4.　表示したい等値面の値をキーボードから入力する</h3>
+  <p>キーボードから等値面の値を入力し，入力された値がボリュームデータのもつ最小値・最大値の範囲を超えていないかチェックする．</p>
+<code><pre class="prettyprint lang-cpp">
+// 等値面の値をキーボードから入力する
+double input_iso, iso;
+// ボリュームデータの最小値
+double value_min = static_cast&lt;double&gt;( volume-&gt;minValue() );
+// ボリュームデータの最大値 
+double value_max = static_cast&lt;double&gt;( volume-&gt;maxValue() );
+
+std::cout &lt;&lt; &quot;Input Isolevel [ &quot; &lt;&lt; value_min &lt;&lt; &quot; - &quot; &lt;&lt; value_max &lt;&lt; &quot;] : &quot;;
+
+// キーボードから入力した値を取得する<br />std::cin &gt;&gt; input_iso;
+ 
+// 最大値と最小値を超えていないかチェック
+if    ( input_iso &lt; value_min ) iso = value_min;
+else if( input_iso &gt; value_max ) iso = value_max;
+else    iso = input_iso; 
+</pre></code>
+  <p>&nbsp;</p>
+  <h3>5.　等値面を作成する</h3>
+  <p>KVSには，kvs::StructuredVolumeObject からマーチングキューブ法を使って等値面を生成し，</p>
+  <p>kvs::PolygonObject を作成するクラス<span class="pRed"> kvs::Isosurface</span> があります．</p>
+  <p>これまでと同様にkvs::Isosurfacce のコンストラクタを用いて変数宣言と同時に値を代入します．</p>
+  <p>コンストラクタの要求する引数は</p>
+  <ul>
+    <li>ボリュームデータ（kvs::StructuredVolumeObject ）</li>
+    <li>等値面の値</li>
+    <li>法線の種類</li>
+  </ul>
+  <p>です．</p>
+  <p>法線の種類はポリゴンオブジェクトを作成したときと同様にenum型 {VertexNormal,PolygonNormal} で指定します．</p>
+<code><pre class="prettyprint lang-cpp">
+kvs::PolygonObject* object =
+   new kvs::Isosurface( volume,
+                        iso,
+                        kvs::PolygonObject::VertexNormal );	//　法線の種類
+</pre></code>
+  <p>&nbsp;</p>
+  <h3>6.　ポリゴンオブジェクトが作成できたかチェックする</h3>
+  <p>ポリゴンオブジェクトが正しく作成できたかのチェックを行う．</p>
+  <p>また，正しく作成できていた場合には，ボリュームデータは不要になるため，削除する．</p>
+<code><pre class="prettyprint lang-cpp">
+// ポリゴンオブジェクトが正しく作成できたか？
+if ( !object )
+{
+    kvsMessageError( "Cannot create a polygon object." );
+    delete volume;
+    return( false );
+}
+// 不要になったボリュームデータを削除する
+delete volume;
+</pre></code>
+  <p>&nbsp;</p>
+  <h3>7.　描画</h3>
+  <p>GLUTによる可視化処理を行います．  </p>
+  <p>registerObjectには，kvs::Isosurfaceクラスを使って作成したobject を登録します．</p>
+<code><pre class="prettyprint lang-cpp">
+// Screenクラスの生成と設定
+kvs::glut::Screen screen( &app );
+screen.registerObject( object );
+screen.setGeometry( 0, 0, 512, 512 );
+screen.setTitle( "Isosurface");
+screen.show();
+// イベント待ち
+return( app.run() );
+</pre></code>
+  <p></p>
+  <p>&nbsp;</p>
+  <h3>8.　ヘッダファイル</h3>
+  <p></p>
+  <p>例3以外に使用したKVSクラスを追加してインクルードします．</p>
+  <p>ここでは，新たに</p>
+  <ul>
+    <li>kvs::PolygonObject</li>
+    <li>kvs::Isosurface</li>
+    <li>kvs::glut::Screen</li>
+    <li> kvs::glut::Application</li>
+  </ul>
+  <p>を追加しました．</p>
+<code><pre class="prettyprint lang-cpp">
+#include &lt;kvs/PolygonObject&gt;
+#include &lt;kvs/Isosurface&gt;
+#include &lt;kvs/glut/Application&gt;
+#include &lt;kvs/glut/Screen&gt;
+</pre></code>
+  <p></p>
+  <p>&nbsp;</p>
+  <h3>9.　まとめ</h3>
+  <p>以上をまとめたプログラムはこちら：　<a href="Program/Isosurface.tgz">Isosurface.tgz</a></p>
+  <p>&nbsp;</p>
+  <h3>10.　コンパイルと実行</h3>
+  <p>作成したプログラムをコンパイル，実行してみましょう．</p>
+  <p>KVSプログラムをコンパイルするためにはkvsmakeコマンドを用いてMakefileを作成すると簡単にコンパイルを行うことができます．</p>
+  <p class="code">$ kvsmake -G　　　　　　　　　　&lt;-- Makefile の作成</p>
+  <p class="code">$ kvsmake　　　　　　　　　　　　&lt;-- コンパイル</p>
+  <p>エラーなくコンパイルできたら，実行してみましょう．</p>
+  <p>実行すると，最小値・最大値が出力され，描画したい等値面の値を入力するように促されるので，</p>
+  <p>とりあえず，『0.0』を入力して零等値面を描画して下さい．</p>
+<p class="code">$ ./Isosurface　　　　　　　　　　　　　　</p>
+  <p class="code">Input Isolevel  [ -21 　-　2.99395] :　<span class="pRed">0.0</span></p>
+<p></p>
+  <p>&nbsp;</p>
+  <p>例3と同様の等値面が描画できることが確認できると思います．</p>
+  <p class="image"><img src="img/progIso.png" width="400" alt="Isosurface" /></p>
+
+  <a name="sec2"></a>
+  <h2>問題　複数等値面の描画</h2>
+  <p>上述の例で，等値面を作成する際に指定した法線の種類を面法線（ PolygonNormal ）に変更してみよう．</p>
+  <p>変更した結果どのように絵が変わるのかを確認してみましょう．</p>
+  <p>さらに，等値面をもう1つ作成（新たな PolygonObject を作成）し，不透明度の違う2つの等値面を描画してみよう．</p>
+<p>&nbsp;</p>
+  <p>（ヒント）</p>
+  <p>もう1つの等値面は</p>
+  <p>kvs::PolygonObject* object2</p>
+  <p>として1つめの等値面と同様にして（等値面の値を変更して）作成します．</p>
+  <p>不透明度はPolygonObject クラスのもつメソッドを利用します．</p>
+<code><pre class="prettyprint lang-cpp">
+object-&gt;setOpacity( 10 );
+object2-&gt;setOpacity( 100 );
+</pre></code>
+  <p>setOpasity 関数の引数の型は kvs::UInt8 です．</p>
+  <p>それぞれのオブジェクトに不透明度を設定することができます．</p>
+  <p>また，２つのオブジェクトをそれぞれスクリーンに登録することができます．</p>
+<code><pre class="prettyprint lang-cpp">
+screen.registerObject( object );
+screen.registerObject( object2 );
+</pre></code>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+<!--<p align="right"><a href="Program/Isosurface_Ex.tgz">Isosurface_Ex.tgz</a></p>-->
+  <p align="right">Modefied at June 16, 2013</p>
+  <p align="right"> at April 27, 2017</p>
+  
+
+  <p>&nbsp;</p>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#main -->
+
+  <div id="fotter">
+    <p><a href="index.html">TOP</a>　</p>
+  </div>
+  <!-- end div#fotter -->
+    
+</div>
+<!-- end div#wrapper -->
+
+</body>
+<!-- InstanceEnd --></html>

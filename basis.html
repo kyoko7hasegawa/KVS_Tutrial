@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>KVS Programming Guide</title>
+<link href="base.css" rel="stylesheet" type="text/css" media="screen, tv, projection" />
+</head>
+
+<body id="basis">
+<div id="wrapper">
+  <div id="header">
+    <h1>KVS vsrsion 2.x Tutorial</h1>
+    <p>&nbsp;</p>
+    <p align="right">kvs : <a href=" https://github.com/naohisas/KVS" target="_blank"> https://github.com/naohisas/KVS</a></p>
+  </div>
+  <!-- end div#header -->
+  
+  <div id="sidebar">
+    <dl>
+      <dd id="nInstall"><a href="install.html">インストール</a></dd>
+      <dd id="nBasis"><a href="basis.html">基本的な使い方</a></dd>
+      <dd id="nTransFunc"><a href="transFunc.html">伝達関数を調整する</a></dd>
+      <dd id="nDICOM"><a href="DICOM.html">DICOMデータを読み込む</a></dd>
+    </dl>
+    <p><strong><br />
+    </strong></p>
+    <p><strong> <a href="Program.html">KVSプログラムの作成</a></strong></p>
+    <dl>
+      <dd id="nProg01"><a href="Program01.html">3次元ベクトルの演算</a></dd>
+      <dd id="nProgMatrix"><a href="ProgramMatrix.html">行列クラス</a></dd>
+      <dd id="nProg02"><a href="Program02.html">行列の演算（行列クラスの応用）</a></dd>
+      <dd id="nProgRandom"><a href="ProgramRandom.html">乱数生成</a></dd>
+      <dd id="nProg03"><a href="Program03.html">オブジェクトについて</a></dd>
+      <dd id="nProg04"><a href="Program04.html">構造型ボリュームデータの作成</a></dd>
+      <dd id="nProg05"><a href="Program05.html">面データの可視化</a></dd>
+      <dd id="nProgIso"><a href="ProgramIso.html">等値面の可視化</a></dd>
+      <dd id="nProg06"><a href="Program06.html">可視化パイプライン</a></dd>
+      <dd id="nProg07"><a href="Program07.html">レイキャスティングの実装</a></dd>
+      <dd id="nProg08"><a href="Program08.html">PBVRの実装</a></dd>
+      <dd id="nAppendix"><a href="Appendix.html">付録：プログラム集（仮）</a></dd>
+    </dl>
+  </div>
+  <!-- end div#sidebar -->
+
+  <div id="main">
+  <h2>コンパイル</h2>
+  <h3>１．Makefileの作り方</h3>
+  <p>KVSでは，KVSライブラリ群を使用してプログラムをコンパイルするためのMakefile を作成することができます．</p>
+  <p>Makefileを作成するためには，</p>
+  <p class="code">$ kvsmake -G</p>
+  <p>とすると今いるディレクトリ名と同じ名前の実行ファイルを作成するような</p>
+  <p class="pRed">KVS用のMakefile ： Makefile.kvs</p>
+  <p>が作成されます．</p>
+  <p>自分で実行ファイル名を決定したい場合は</p>
+  <p class="code">$ kvsmake -g main.exe</p>
+  <p>とすれば，コンパイル後の実行ファイル名は『main.exe』となります．</p>
+  <h3>２．コンパイルの仕方</h3>
+  <p>Makefile.kvsが作成できれば，</p>
+  <p class="code">$ kvsmake</p>
+  <p>とすれば，コンパイルが開始され，実行ファイルが作成されます．<br />
+  kvsmakeコマンドは，”make -f Makefile.kvs”と同意です．</p>
+  
+  <h2>サンプルプログラムを動かしてみよう</h2>
+  <p>kvsのソースファイルの中にはいろいろなサンプルプログラムが用意されています．<br />
+  ~/local/src/kvs-src/Example/ フォルダ内に多様なサンプルプログラムが入っています．<br />
+  ここでは，水素分子の電荷分布をボリュームデータとして作成するサンプルプログラムを利用して，データの作成と可視化を行ってみましょう．</p>
+  <p>まず，自分の作業用ディレクトリ（ここでは，ホームディレクトリの下に「work」というディレクトリを作成します）を作成してサンプルプログラムをコピーします．</p>
+  <p class="code">
+	$ mkdir ~/work　　&lt;-- 作業用ディレクトリの作成<br />
+    $ cd ~/work　　&lt;-- sagyou用ディレクトリに移動<br />
+    $ cp -r ~/local/src/kvs-srcExample/Application/Hydrogen  . 　　&lt;-- サンプルプログラムのコピー
+  </p>
+　<p>コピーしてきた「Hydrogen」ディレクトリ内に移動して下さい．</p>
+  <p class="code"> $ cd Hydrogen</p>
+  <p>プログラムをコンパイルします．<br />
+  コンパイルの仕方は上述の「コンパイル」の節に従って，Makefileを作成してコンパイルします．</p>
+  <p class="code">
+	$ kvsmake -G 　　&lt;-- Makefileを作成する
+    $ kvsmake 　　&lt;-- プログラムのコンパイル
+  </p>
+  <p>問題なくコンパイルができていれば，『Hydrogen』という名前の実行ファイルができています．<br />
+  これを実行すると，ボリュームデータ『hydrogen.kvsml』が作成されます．
+  <p class="code">
+   $ ./Hydrogen 　　&lt;-- プログラムの実行
+  </p>
+  <p>作成した『hydrogen.kvsml』を可視化してみましょう．<br/>
+  KVSには下にも記述してある通り，コマンドラインアプリケーションが用意されています． <br />
+  可視化ツール”kvsview”を使ってみましょう．</p>
+  <p class="code"> $ kvsview hydrogen.kvsml</p>
+  <p>kvsview を使って可視化をすると，数のようなウインドウが現れます．<br />
+  マウスドラッグで見る向きや，大きさを変えることができます．<br />
+  ウィンドウを閉じる場合は，「q」または「esc」キーを押して閉じて下さい．</p>
+  　<img src="img/RayCas2.png" width="250" alt="hydrogen.kvsml" />
+
+  <h2>コマンドラインアプリケーション</h2>
+  <p>KVSには以下の様なコマンドラインツールが用意されています．</p>
+  <p>&nbsp;</p>
+  <table border="0">
+  <tr><td width="60">kvsmake</td>
+  <td width="418">：KVSを利用したプログラムをコンパイルする</td></tr>
+  <tr><td>kvsview</td>
+  <td>：KVSで読み込み可能なデータを簡単に可視化する</td></tr>
+  <tr><td>kvscheck</td>
+  <td>：KVSのバージョンやコンパイラの情報などをチェックする</td></tr>
+  <tr><td>kvsconv</td>
+  <td>：KVSで可視化を行うためのデータ変換を行う</td></tr>
+  </table>
+  <p>&nbsp;</p>
+  <h2>可視化ツール”kvsview”の使い方</h2>
+  <p>KVSをインストールすると，以下のコマンドラインアプリケーションがインストールされます．</p>
+  <p>　＊　kvsmake ： 上で説明したように，KVSを利用したプログラム向けのコンパイルコマンド．</p>
+  <p>　＊　kvscheck ： KVSのバージョンやコンパイラの情報などをチェックするためのコマンド．</p>
+  <p>　＊　kvsconv ： KVSで可視化を行うためのデータ変換コマンド</p>
+  <p>　＊　kvsview ： KVSで読み込み可能なデータを簡単に可視化するためのコマンド．<br />
+  </p>
+<!--
+  <p>（詳細は<a href="http://code.google.com/p/kvs/wiki/KVS_command_line_applications_jp" target="_blank">本家Webページ</a>をみて下さい） </p>
+  -->
+  <p>&nbsp;</p>
+  <h3>kvsview にはどんな機能があるのか見てみよう</h3>
+  <p>kvsviewはKVSで読み込みが可能なデータに対して，可視化手法をしていして可視化するか，指定しなかった場合はデータに応じて適当な可視化パイプラインを生成して可視化を行うコマンドラインアプリケーションです．</p>
+  <p class="code">$ kvsview -h</p>
+  <p>とすると，kvsviewコマンドで使用できるレンダラの一覧を見ることができます．</p>
+  <p>&nbsp;</p>
+  <p>&nbsp; </p>
+  <!--&nbsp;</p>
+  <p>% kvsview -TransferFunction lobster.fld </p>
+  <p>&nbsp;</p>-->
+  <p>&nbsp;</p>
+<!--  <p align="right"><a href="Program/ViewPolygon_Ex.tgz">ViewPolygon_Ex.tgz</a></p>-->
+  <p align="right">Modefied at April 12, 2017  </p>
+  </div>
+  <!-- end div#main -->
+
+  <div id="fotter">
+    <p><a href="index.html">TOP</a>　</p>
+  </div>
+  <!-- end div#fotter -->
+    
+</div>
+<!-- end div#wrapper -->
+
+</body>
+</html>

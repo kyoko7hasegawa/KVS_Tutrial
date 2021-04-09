@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>KVS Programming Guide</title>
+<!-- InstanceEndEditable -->
+<link href="base.css" rel="stylesheet" type="text/css" media="screen, tv, projection" />
+<!-- Code 装飾用 Google google-code-prettify -->
+<!--<link rel="stylesheet" type="text/css" href="code-prettify/src/prettify.css">-->
+<!--<link rel="stylesheet" type="text/css" href="../code-prettify/styles/desert.css">-->
+<link rel="stylesheet" type="text/css" href="code-prettify/styles/tomorrow-night-blue.css">
+<script type="text/javascript" src="code-prettify/src/prettify.js"></script>
+<script type="text/javascript" src="code-prettify/src/lang-css.js"></script>
+<!-- ここまで -->
+
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<!-- InstanceParam name="id" type="text" value="Prog02" -->
+</head>
+
+<body onload="PR.prettyPrint()" id="Prog02">
+<div id="wrapper">
+  <div id="header">
+    <h1>KVS vsrsion 2.x Tutorial</h1>
+    <p>&nbsp;</p>
+    <p align="right"> kvs version 2.9</p>
+    <p align="right">kvs : <a href=" https://github.com/naohisas/KVS" target="_blank"> https://github.com/naohisas/KVS</a></p>
+  </div>
+  <!-- end div#header -->
+  
+  <div id="sidebar">
+  <!-- InstanceBeginEditable name="sidebarArea" -->
+  <dl>
+    <dd id="nInstall"><a href="install.html">インストール</a></dd>
+    <dd id="nBasis"><a href="basis.html">基本的な使い方</a></dd>
+    <dd id="nTransFunc"><a href="transFunc.html">伝達関数を調整する</a></dd>
+    <dd id="nDICOM"><a href="DICOM.html">DICOMデータを読み込む</a></dd>
+  </dl>
+  <p><strong><br />
+  </strong></p>
+  <p><strong> <a href="Program.html">KVSプログラムの作成</a></strong></p>
+  <dl>
+    <dd id="nProg01"><a href="Program01.html">3次元ベクトルの演算</a></dd>
+    <dd id="nProgMatrix"><a href="ProgramMatrix.html">行列クラス</a></dd>
+    <dd id="nProg02"><a href="Program02.html">行列の演算（行列クラスの応用）</a></dd>
+      <dt >例　行列の演算</dt>
+      <dt ><a href="#sec3">問題　標準系を求めよう</a></dt> 
+    <dd id="nProgRandom"><a href="ProgramRandom.html">乱数生成</a></dd>
+    <dd id="nProg03"><a href="Program03.html">オブジェクトについて</a></dd>
+    <dd id="nProg04"><a href="Program04.html">構造型ボリュームデータの作成</a></dd>
+    <dd id="nProg05"><a href="Program05.html">面データの可視化</a></dd>
+    <dd id="nProgIso"><a href="ProgramIso.html">等値面の可視化</a></dd>
+    <dd id="nProg06"><a href="Program06.html">可視化パイプライン</a></dd>
+    <dd id="nProg07"><a href="Program07.html">レイキャスティングの実装</a></dd>
+    <dd id="nProg08"><a href="Program08.html">PBVRの実装</a></dd>
+    <dd id="nAppendix"><a href="Appendix.html">付録：プログラム集（仮）</a></dd>
+  </dl>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#sidebar -->
+
+  <div id="main">
+  <!-- InstanceBeginEditable name="mainArea" -->
+<a name="sec2"></a>
+  <h2>例　行列の演算</h2>
+  <p>2次形式：</p>
+<p>　2x<Sup>2</Sup> + 2y<Sup>2</Sup> + 2z<Sup>2</Sup> + 2xy + 2yz + 2zx = 3</p>
+  <p>の標準系を求めよう．</p>
+  <p>&nbsp;</p>
+  <h3>1.　作業ディレクトリの作成</h3>
+  <p>作業ディレクトリに「QuadricSurface」というディレクトリを作成して，移動して下さい． <br />
+  </p>
+  <p class="code">$ mkdir   QuadricSurface</p>
+  <p class="code">$ cd QuadricSurface </p>
+  <h3>&nbsp;</h3>
+  <h3>2.　main.ccp の作成</h3>
+  <p>「main.cpp」というファイルを作成して下さい．</p>
+  <p>ここでは，3×3行列と3次元ベクトルを使用するために&lt;kvs/Matrix33&gt;と&lt;kvs/Vector3&gt;をインクルードします．</p>
+<code><pre class="prettyprint lang-cpp">
+#include &lt;kvs/Vector3&gt;
+#include &lt;kvs/Matrix33&gt;
+
+int main( void )
+{
+   return ( 0 );
+}
+</pre></code>
+<p></p>
+  <h3>3.　行列とベクトルの宣言 </h3>
+  <p>2次形式は行列とベクトルを用いて：</p>
+  　<img src="Equation/Eq01.png" width="155" height="44" alt="Equation" />
+  <p>で書き表すことができます．</p>
+  <p>ここで，実対称行列</p>
+  　<img src="Equation/MatrixA.png" width="87" height="44" alt="Matrix A" />
+  <p>  をdouble型の3次正方行列として宣言します．</p>
+<p>クラス名は<span class="pRed">kvs::Matrix33d </span>となり，ここで，3は行数及び列数，d はdouble型を表しています．</p>
+<p>kvs::Matrixクラスは，C言語と同様にA[0][0] = 1; のように添字演算子[]を使うこともでき，</p>
+<p>また，kvs::Vectorクラスと同様にコンストラクタを用いて変数宣言と同時に値を代入することもできます．</p>
+<code><pre class="prettyprint lang-cpp">
+kvs::Matrix33d A( 2, 1, 1,
+                  1, 2, 1,
+                  1, 1, 2 );
+</pre></code>
+
+  <p>行列Aの固有値 λ<sub>1</sub> = λ<sub>2</sub> = 1, λ<sub>3</sub> = 4より，正規直交な固有ベクトル</p>
+  　<img src="Equation/All_Vec_p.png" width="258" height="47" alt="Eigen Vector" />
+  <p>を3次元double型のベクトルとして宣言します．</p>
+<p>これらの固有ベクトルを列ベクトルとして並べた直交行列 <em>P</em></p> 
+　
+<img src="Equation/MatrixP.png" width="235" height="47" alt="Matrix P" />
+<p>をdouble型の3次正方行列 kvs::Matrix33dとして宣言します．</p>
+<p>各要素はkvs::Vectorクラスに定義されているx, y, z 成分を戻り値とするメソッド<span class="pRed">x(),  y(),  z()</span>を利用します．</p>
+  <p></p>
+<code><pre class="prettyprint lang-cpp">
+// 固有ベクトル
+kvs::Vector3d p1 ( 1/sqrt(2), -1/sqrt(2), 0.0 );
+kvs::Vector3d p2 ( 1/sqrt(6), 1/sqrt(6), -2/sqrt(6) );
+kvs::Vector3d p3 ( 1/sqrt(3), 1/sqrt(3), 1/sqrt(3) );
+// 直交行列
+kvs::Matrix33d P ( p1.x(), p2.x(), p3.x(),
+                  p1.y(), p2.y(), p3.y(),
+                  p1.z(), p2.z(), p3.z() );
+</pre></code>
+  <h3>4.　行列の演算</h3>
+  <p>　<img src="Equation/xyz.png" width="81" height="44" alt="xyz" />
+  </p>
+  <p>とおけば，この2次形式は</p> 
+  　
+<img src="Equation/NewEquation.png" width="112" height="44" alt="New Equation" />
+<p>であらわすことができます．</p>
+  <p>ここで，kvs::Matrixクラスには転置列を計算するメソッド<span class="pRed">transposed()</span>が定義されており，</p>
+  <p>それを利用してP<Sup>T</Sup>APを計算します．  </p>
+<code><pre class="prettyprint lang-cpp">
+kvs::Matrix33d L = P. transposed() * A * P;
+std::cout &lt;&lt; L &lt;&lt; std::endl;
+</pre></code>
+  <p>より，この2次形式の標準系は：</p>
+  <p>X<Sup>2</Sup> + Y<Sup>2</Sup> + 4Z<Sup>2</Sup> = 3  </p>
+  <p>となり，楕円形を表していることが分かります．</p>
+  <p><br />
+  </p>
+  <h3>5.　まとめ</h3>
+  <p>以上をまとめたプログラムはこちら：　<a href="./Program/QuadricSurface.tgz">QuadricSurface.tgz</a></p>
+  <p>&nbsp;</p>
+  <h3>6.　コンパイルと実行</h3>
+  <p>作成したプログラムをコンパイル，実行してみましょう．</p>
+  <p>KVSプログラムをコンパイルするためにはkvsmakeコマンドを用いてMakefileを作成すると簡単にコンパイルを行うことができます．</p>
+  <p class="code">$ kvsmake -G　　　　　　　　　　&lt;-- Makefile の作成</p>
+  <p class="code">$ kvsmake　　　　　　　　　　　　&lt;-- コンパイル</p>
+  <p>エラーなくコンパイルできたら，実行してみましょう．</p>
+  <p>以下のような対角行列と標準形が出力られる実行結果が得られると思います．</p>
+  <p class="code">$ ./QuadricSurface　　　　　　　　　　　　　　</p>
+  <p class="code">1 0 0</p>
+  <p class="code">0 1 -5.55112e-17</p>
+  <p class="code">0 0 4</p>
+  <p class="code">1 X^2 + 1 Y^2 + 4 Z^2 = 3  </p>
+  <p></p>
+  <p></p>
+  <p>以上のようにして行列の演算を行うことができます．</p>
+  <p>行列演算クラスとしては他に，</p>
+  <p>　　LU分解（&lt;kvs/ LUDecomposer&gt;），</p>
+  <p>　　QR分解（&lt;kvs/ QRDecomposer&gt;），</p>
+  <p>　　固有値分解（&lt;kvs/ EigenDecomposer&gt;）</p>
+  <p>等のクラスも用意されています．</p>
+  <p>&nbsp;</p>
+  <a name="sec3"></a>
+  <h2>問題　　標準系を求めよう </h2>
+  <p>2次形式： <br />
+    　2<em>x</em><Sup>2</Sup>  + 2<em>y</em><Sup>2</Sup> + 5<em>z</em><Sup>2</Sup> - 2<em>xy</em> + 4<em>yz</em> -4<em>zx</em> = 2<br />
+    の標準系を求めよう． </p>
+  <p>ヒント：2次形式の行列とベクトルを用いて </p>
+  　<img src="Equation/prb_1.png" width="198" height="44" alt="Prob_1" />
+  <p>で表すことができます．</p>
+  <p>固有値分解クラスを利用して直交行列を求めてみましょう．</p>
+  <p>（ヒント）</p>
+<code><pre class="prettyprint lang-cpp">
+// 固有値分解クラス
+kvs::EigenDecomposer&lt;double&gt; eigen( A );
+ 
+// 固有ベクトルを並べた行列Pを作成
+const kvs::Matrix&lt;double&gt;&amp; P = eigen.eigenVectors() ;
+ 
+// P がconstで定義されているので，転置を計算するために行列 F を定義
+kvs::Matrix33d F( P[0][0], P[1][0], P[2][0],
+                  P[0][1], P[1][1], P[2][1],
+                  P[0][2], P[1][2], P[2][2] );
+</pre></code>
+<p>サンプルソース：<br />
+  (KVSのソースをダウンロードしたディレクトリ) kvs-src/Example/Numeric/EigenDecomposition</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<!--<p align="right"><a href="Program/QuadricSurface_Ex.tar.gz">QuadricSurface_Ex.tar.gz</a></p>-->
+<p align="right">Modefied at June 25, 2014</p>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#main -->
+
+  <div id="fotter">
+    <p><a href="index.html">TOP</a>　</p>
+  </div>
+  <!-- end div#fotter -->
+    
+</div>
+<!-- end div#wrapper -->
+
+</body>
+<!-- InstanceEnd --></html>

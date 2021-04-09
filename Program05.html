@@ -1,0 +1,313 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>KVS Programming Guide</title>
+<!-- InstanceEndEditable -->
+<link href="base.css" rel="stylesheet" type="text/css" media="screen, tv, projection" />
+<!-- Code 装飾用 Google google-code-prettify -->
+<!--<link rel="stylesheet" type="text/css" href="code-prettify/src/prettify.css">-->
+<!--<link rel="stylesheet" type="text/css" href="../code-prettify/styles/desert.css">-->
+<link rel="stylesheet" type="text/css" href="code-prettify/styles/tomorrow-night-blue.css">
+<script type="text/javascript" src="code-prettify/src/prettify.js"></script>
+<script type="text/javascript" src="code-prettify/src/lang-css.js"></script>
+<!-- ここまで -->
+
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<!-- InstanceParam name="id" type="text" value="Prog05" -->
+</head>
+
+<body onload="PR.prettyPrint()" id="Prog05">
+<div id="wrapper">
+  <div id="header">
+    <h1>KVS vsrsion 2.x Tutorial</h1>
+    <p>&nbsp;</p>
+    <p align="right"> kvs version 2.9</p>
+    <p align="right">kvs : <a href=" https://github.com/naohisas/KVS" target="_blank"> https://github.com/naohisas/KVS</a></p>
+  </div>
+  <!-- end div#header -->
+  
+  <div id="sidebar">
+  <!-- InstanceBeginEditable name="sidebarArea" -->
+  <dl>
+    <dd id="nInstall"><a href="install.html">インストール</a></dd>
+    <dd id="nBasis"><a href="basis.html">基本的な使い方</a></dd>
+    <dd id="nTransFunc"><a href="transFunc.html">伝達関数を調整する</a></dd>
+    <dd id="nDICOM"><a href="DICOM.html">DICOMデータを読み込む</a></dd>
+  </dl>
+  <p><strong><br />
+  </strong></p>
+  <p><strong> <a href="Program.html">KVSプログラムの作成</a></strong></p>
+  <dl>
+    <dd id="nProg01"><a href="Program01.html">3次元ベクトルの演算</a></dd>
+    <dd id="nProgMatrix"><a href="ProgramMatrix.html">行列クラス</a></dd>
+    <dd id="nProg02"><a href="Program02.html">行列の演算（行列クラスの応用）</a></dd>
+    <dd id="nProgRandom"><a href="ProgramRandom.html">乱数生成</a></dd>
+    <dd id="nProg03"><a href="Program03.html">オブジェクトについて</a></dd>
+    <dd id="nProg04"><a href="Program04.html">構造型ボリュームデータの作成</a></dd>
+    <dd id="nProg05"><a href="Program05.html">面データの可視化</a></dd>
+        <dt>例　面データの可視化</dt>
+        <dt>問題　ワイヤーフレーム表示</dt>    
+    <dd id="nProgIso"><a href="ProgramIso.html">等値面の可視化</a></dd>
+    <dd id="nProg06"><a href="Program06.html">可視化パイプライン</a></dd>
+    <dd id="nProg07"><a href="Program07.html">レイキャスティングの実装</a></dd>
+    <dd id="nProg08"><a href="Program08.html">PBVRの実装</a></dd>
+    <dd id="nAppendix"><a href="Appendix.html">付録：プログラム集（仮）</a></dd>
+  </dl>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#sidebar -->
+
+  <div id="main">
+  <!-- InstanceBeginEditable name="mainArea" -->
+  <h2>例　面データの可視化</h2>
+  <p>四面体を描画するプログラムを作成します．</p>
+  <p>PolygonObjectはメンバ変数として，</p>
+  <ul>
+    <li>ポリゴンの種類（enum型　{Triangle,  Quadrangle} ）</li>
+    <li>色の種類（enum型 {VertexColor, PolygonColor} ）</li>
+    <li>法線の種類（enum型 {VertexNormal,PolygonNormal} ）</li>
+    <li>接続情報（kvs::ValueArray&lt;kvs::UInt32&gt;）</li>
+    <li>透明度（kvs::ValueArray&lt;kvs::UInt8&gt;）</li>
+    <li>頂点座標（kvs::ValueArray&lt;kvs::Real32&gt;）</li>
+    <li>色（kvs::ValueArray&lt;kvs::UInt8&gt; ）</li>
+    <li>法線（kvs::ValueArray&lt;kvs::Real32&gt;）</li>
+  </ul>
+  <p>があります．</p>
+  <p>この例では作成したオブジェクトを可視化の為に定義されているScreenクラスへ登録し，描画を行います．</p>
+  <p>&nbsp; </p>
+  <h3>1.　作業ディレクトリの作成</h3>
+  <p>作業ディレクトリに「ViewPolygon」というディレクトリを作成して，移動して下さい． <br />
+  </p>
+  <p class="code">$ mkdir   ViewPolygon</p>
+  <p class="code">$ cd ViewPolygon </p>
+  <h3>&nbsp;</h3>
+  <h3>2.　main.ccp の作成</h3>
+  <p>「main.cpp」というファイルを作成して下さい．  </p>
+  <p>作成する四面体の</p>
+  <ul>
+    <li>頂点座標</li>
+    <li>頂点色</li>
+    <li>頂点法線</li>
+    <li>接続情報</li>
+    </ul>
+  <p>を配列に代入します．</p>
+  <p>KVSのオブジェクトに渡すために，配列は一旦Vectorコンテナに格納しておきます．</p>
+<p>また，OpenGLによる描画のためにmain関数には引数をもたせて下さい．</p>
+<code><pre class="prettyprint lang-cpp">
+int main( int argc, char** argv )
+{
+   // 頂点座標
+   kvs::Real32 vertex[] = { -1.0, -1.0, -1.0,	// 第0頂点座標
+                             1.0, 0.0, 0.0,	// 第1頂点座標
+                             0.0, 1.0, 0.0,	// 第2頂点座標
+                             0.0, 0.0, 1.0 };	// 第3頂点座標
+　// 頂点色
+　kvs::UInt8 vertCol[] = { 0, 0, 0,	// 第0頂点の色
+                           255, 0, 0,	// 第1頂点の色
+                           0, 255, 0,	// 第2頂点の色
+                           0, 0, 255 };	// 第3頂点の色
+   // 頂点法線
+   kvs::Real32 norm[] = { -0.577, -0.577, -0.577,	// 第0頂点の法線
+                           0.577, -0.577, -0.577,	// 第1頂点の法線
+                          -0.577,  0.577, -0.577,	// 第2頂点の法線
+                          -0.577, -0.577,  0.577 };	// 第3頂点の法線　 　
+   // 接続情報
+   kvs::UInt32 tri[] = { 0, 2, 1,
+                         0, 1, 3,
+                         0, 3, 2,
+                         3, 2, 1 };
+ 
+   // Vectorコンテナに格納 
+   std::vector&lt;kvs::Real32&gt;coords( vertex, vertex + 12 );
+   std::vector&lt;kvs::UInt32&gt;connects( tri, tri + 12 );
+   std::vector&lt;kvs::UInt8&gt;colors( vertCol, vertCol + 12 );
+   std::vector&lt;kvs::Real32&gt;normals( norm, norm + 12 );
+ 
+   return ( 0 );
+}
+</pre></code>
+<p></p>
+  <p>&nbsp;</p>
+  <h3>3.　面データ（PolygonObject）の作成</h3>
+  <p>面データ（PolygonObject）を作成します．</p>
+  <p>ここでは，<span class="pRed">kvs::PolygonObject</span>のインスタンスを生成した後に，データをセットします．</p>
+  <p>セットするデータは以下の8種類です．</p>
+  <ul>
+    <li>頂点座標（kvs::ValueArray&lt;kvs::Real32&gt;）</li>
+    <li>接続情報（kvs::ValueArray&lt;kvs::UInt32&gt;）</li>
+    <li>色（kvs::ValueArray&lt;kvs::UInt8&gt; ）</li>
+    <li>透明度（kvs::ValueArray&lt;kvs::UInt8&gt;）</li>
+    <li>法線（kvs::ValueArray&lt;kvs::Real32&gt;）</li>
+    <li>ポリゴンの種類</li>
+    <li>色の種類</li>
+    <li>法線の種類</li>
+    </ul>
+  <p>です．</p>
+<p>ここでは，ポリゴンの種類をTriangle，色と法線の情報はそれぞれ頂点に付加されているとし，</p>
+  <p>また，不透明度は常に一定（255は不透明）であるとして，kvs::UInt8型の変数を１つ渡しています．</p>
+<code><pre class="prettyprint lang-cpp">
+// オブジェクトの作成
+kvs::PolygonObject* object = new kvs::PolygonObject( ); 
+
+// データのセット
+object-&gt;setCoords( kvs::ValueArray&lt;kvs::Real32&gt;( coords ) ); // 頂点情報
+object-&gt;setConnections( kvs::ValueArray&lt;kvs::UInt32&gt;( connects ) ); // 接続情報
+object-&gt;setColors( kvs::ValueArray&lt;kvs::UInt8&gt;( colors ) ); // 色情報
+object-&gt;setOpacity( 255 );	// 不透明度
+object-&gt;setNormals( kvs::ValueArray&lt;kvs::Real32&gt;( normals ) ); // 法線情報
+object-&gt;setPolygonType( kvs::PolygonObject::Triangle ); // ポリゴンの種類
+object-&gt;setColorType( kvs::PolygonObject::VertexColor ); // 色情報の種類 
+object-&gt;setNormalType( kvs::PolygonObject::VertexNormal ); // 法線情報の種類
+</pre></code>
+  <p>描画する範囲を決定するために，座標値の最大値と最小値をあらかじめ計算しておきます．</p>
+<code><pre class="prettyprint lang-cpp">
+object-&gt;updateMinMaxCoords();
+</pre></code>
+  <p></p>
+  <p>&nbsp;</p>
+  <h3>4.　描画</h3>
+  <p>OpenGLによる可視化のために，GLUTの初期化を行います．</p>
+  <p>KVSでは，GLUTの関数を簡単に使用できるように<span class="pRed">kvs::glut::Application</span>クラスによって定義することができます．</p>
+<code><pre class="prettyprint lang-cpp">
+kvs::glut::Application app( argc, argv );
+</pre></code>
+  <p>OpenGLでは，ウィンドウの生成やサイズ・背景色の設定を行う関数を呼び，それぞれ設定を行います．</p>
+  <p>KVSではそれらの関数は<span class="pRed">kvs::glut::Screen</span>のメソッドして定義されています．</p>
+  <p>また，キーイベントやマウスイベントについてもKVS内で定義されており，</p>
+  <p>ユーザが設定を行わずともキーやマウスの操作がGLUTウィンドウ上で可能となります．</p>
+  <p>ここでは</p>
+  <ul>
+    <li>＊ウィンドウの左上の位置とウィンドウサイズを設定するメソッド<span class="pRed">setGeometry( )</span></li>
+    <li>＊ウィンドウタイトルを設定するメソッド<span class="pRed">setTitle()</span></li>
+  </ul>
+  <p>を使用します．</p>
+  <p>また，可視化したいオブジェクトは<span class="pRed">registerObject( )</span>を用いてスクリーンクラスに登録します．</p>
+  <p>その後，<span class="pRed">show()</span>を呼ぶと適当なRenderer を用いてオブジェクトが描画されます．</p>
+  <p>Renderer については次節( <a href="Program06.html">可視化パイプライン</a> )で説明します．</p>
+  <p>最後に，イベント待ち状態にするために，<span class="pRed">kvs::glut::Applicationクラスのメソッドrun()</span>を呼びます．</p>
+<code><pre class="prettyprint lang-cpp">
+// Screenクラスの生成と設定
+kvs::glut::Screen screen( &app );
+screen.registerObject( object );
+screen.setGeometry( 0, 0, 512, 512 );
+screen.setTitle( "Polygon");
+screen.show();
+// イベント待ち
+return( app.run() );
+</pre></code>
+  <p></p>
+  <h3>5.　ヘッダファイル</h3>
+  <p>使用したKVSクラスをインクルードします．</p>
+  <p>ここでは，</p>
+  <ul>
+    <li>kvs::PolygonObject</li>
+    <li>kvs::glut::Screen</li>
+    <li> kvs::glut::Application</li>
+  </ul>
+  <p>を使いました．</p>
+<code><pre class="prettyprint lang-cpp">
+#include &lt;kvs/PolygonObject&gt;
+#include &lt;kvs/glut/Application&gt;
+#include &lt;kvs/glut/Screen&gt;
+</pre></code>
+  <p></p>
+  <h3>6.　まとめ</h3>
+  <p>以上をまとめたプログラムはこちら：　<a href="./Program/ViewPolygon.tgz">ViewPolygon.tgz</a></p>
+  <p>&nbsp;</p>
+  <h3>7.　コンパイルと実行</h3>
+  <p>作成したプログラムをコンパイル，実行してみましょう．</p>
+  <p>KVSプログラムをコンパイルするためにはkvsmakeコマンドを用いてMakefileを作成すると簡単にコンパイルを行うことができます．</p>
+  <p class="code">$ kvsmake -G　　　　　　　　　　&lt;-- Makefile の作成</p>
+  <p class="code">$ kvsmake　　　　　　　　　　　　&lt;-- コンパイル</p>
+  <p>エラーなくコンパイルできたら，実行してみましょう．</p>
+  <p>実行すると，以下のような四面体が描画されます．</p>
+  <p class="code">$ ./ViewPolygon　　　　　　　　　　　　　　</p>
+<p></p>
+  <p>&nbsp;</p>
+  <p class="image"><img src="img/Polygon.png" width="400" alt="Poygon" /><br />
+   PolygonObjectの可視化  </p>
+  <p>※　Window を閉じる場合には『esc』キーで終了します．</p>
+  <p>また，マウスは左ボタンで回転，右ボタンで移動，真ん中ボタンは拡大／縮小です．</p>
+  <p>&nbsp;</p>
+  <h2>問題　ワイヤーフレーム表示</h2>
+  <p>上述の四面体のワイヤーフレーム	を表示してみよう．</p>
+  <p>ワイヤーフレーム表示のために，<span class="pRed">kvs::PolygonObject</span>ではなく<span class="pRed">kvs::LineObject</span>を作成する．</p>
+  <p>コンストラクタの要求する引数は</p>
+  <ul>
+    <li>頂点座標（kvs::ValueArray&lt;kvs::Real32&gt;）</li>
+    <li>接続情報（kvs::ValueArray&lt;kvs::UInt32&gt;）</li>
+    <li>色（kvs::ValueArray&lt;kvs::UInt8&gt; ）</li>
+    <li>線の太さ( kvs::Real32 )</li>
+    <li>線の種類</li>
+    <li>色の種類</li>
+  </ul>
+  <p>です．LineObject クラスのもつメンバ変数としては，</p>
+<p>頂点情報，接続情報，色はPolygonObjectと同じです．LineObject クラスがもつ変数としては  </p>
+  <ul>
+    <li>線の種類（enum型　{Strip, Uniline, Polyline, Segment, UnknownLineType} )</li>
+    <li>線の太さ</li>
+  </ul>
+  <p>があります．</p>
+  <p>&nbsp;</p>
+  <p>（ヒント）</p>
+  <p>LineObject は以下の様に宣言することができます．</p>
+<code>
+<pre class="prettyprint lang-cpp">
+kvs::LineObject* object = new kvs::LineObject( );
+
+object-&gt;setCoords( kvs::ValueArray&lt;kvs::Real32&gt;( coords ) ); // 頂点情報
+object-&gt;setConnections( kvs::ValueArray&lt;kvs::UInt32&gt;( connects ) ); // 接続情報
+object-&gt;setColors( kvs::ValueArray&lt;kvs::UInt8&gt;( colors ) ); // 色情報
+object-&gt;setSize( 3.0 );	// 線の太さ
+object-&gt;setLineType( kvs::LineObject::Uniline); // 線の種類
+object-&gt;setColorType( kvs::LineObject::VertexColor );	// 色の種類
+</pre></code>
+  <p>ここでは，上の例と同じ頂点，色，接続情報を用いて「Uniline」を使って線を描画しています．</p>
+  <p>線の種類を変えるとどのような描画結果になるのか試してみましょう．</p>
+  <p>&nbsp;</p>
+
+<!-- 折り畳み展開ポインタ -->
+<div onclick="obj=document.getElementById('open').style; obj.display=(obj.display=='none')?'block':'none';">
+<a style="cursor:pointer;">Lineの種類（▼ クリックで展開）</a>
+</div>
+ <div id="open" style="display:none;clear:both;">
+<!-- ここから -->
+<p>線の種類は，線のつなぎ方によって，以下の4種類があります．</p>
+<p>
+【線分】<br />Strip：頂点番号を指定しない場合，頂点を順番に接続して折れ線を表現します．<br />
+【一本線】<br />Uniline：通る頂点のみを指定し指定された点を順に接続して折れ線を表現します．<br />
+【複数線】<br />Polyline：始点と終点を複数指定することで，複数の折れ線を表現します．<br />
+ 　　　　始点と終点の間にある頂点を順に接続します．<br />
+【分割線】<br />Segment：始点と終点を複数指定することで，複数の直線を表現します．<br />
+　　　　始点と終点を直線的に接続します．<br />
+</ul>
+</p>
+
+
+<!-- ここまで -->
+</div>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+<!--  <p align="right"><a href="Program/ViewPolygon_Ex.tgz">ViewPolygon_Ex.tgz</a></p>-->
+  <p align="right">Modefied at June 16, 2013  </p>
+  <p align="right">at April 24, 2017  </p>
+  <p>&nbsp;</p>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#main -->
+
+  <div id="fotter">
+    <p><a href="index.html">TOP</a>　</p>
+  </div>
+  <!-- end div#fotter -->
+    
+</div>
+<!-- end div#wrapper -->
+
+</body>
+<!-- InstanceEnd --></html>

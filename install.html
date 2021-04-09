@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>KVS Programming Guide</title>
+<!-- InstanceEndEditable -->
+<link href="base.css" rel="stylesheet" type="text/css" media="screen, tv, projection" />
+<!-- Code 装飾用 Google google-code-prettify -->
+<!--<link rel="stylesheet" type="text/css" href="code-prettify/src/prettify.css">-->
+<!--<link rel="stylesheet" type="text/css" href="../code-prettify/styles/desert.css">-->
+<link rel="stylesheet" type="text/css" href="code-prettify/styles/tomorrow-night-blue.css">
+<script type="text/javascript" src="code-prettify/src/prettify.js"></script>
+<script type="text/javascript" src="code-prettify/src/lang-css.js"></script>
+<!-- ここまで -->
+
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<!-- InstanceParam name="id" type="text" value="install" -->
+</head>
+
+<body onload="PR.prettyPrint()" id="install">
+<div id="wrapper">
+  <div id="header">
+    <h1>KVS vsrsion 2.x Tutorial</h1>
+    <p>&nbsp;</p>
+    <p align="right"> kvs version 2.9</p>
+    <p align="right">kvs : <a href=" https://github.com/naohisas/KVS" target="_blank"> https://github.com/naohisas/KVS</a></p>
+  </div>
+  <!-- end div#header -->
+  
+  <div id="sidebar">
+  <!-- InstanceBeginEditable name="sidebarArea" -->
+  <dl>
+    <dd id="nInstall"><a href="install.html">インストール</a></dd>
+    <dd id="nBasis"><a href="basis.html">基本的な使い方</a></dd>
+    <dd id="nTransFunc"><a href="transFunc.html">伝達関数を調整する</a></dd>
+    <dd id="nDICOM"><a href="DICOM.html">DICOMデータを読み込む</a></dd>
+  </dl>
+  <p><strong><br />
+  </strong></p>
+  <p><strong> <a href="Program.html">KVSプログラムの作成</a></strong></p>
+  <dl>
+    <dd id="nProg01"><a href="Program01.html">3次元ベクトルの演算</a></dd>
+    <dd id="nProgMatrix"><a href="ProgramMatrix.html">行列クラス</a></dd>
+    <dd id="nProg02"><a href="Program02.html">行列の演算（行列クラスの応用）</a></dd>
+    <dd id="nProgRandom"><a href="ProgramRandom.html">乱数生成</a></dd>
+    <dd id="nProg03"><a href="Program03.html">オブジェクトについて</a></dd>
+    <dd id="nProg04"><a href="Program04.html">構造型ボリュームデータの作成</a></dd>
+    <dd id="nProg05"><a href="Program05.html">面データの可視化</a></dd>
+    <dd id="nProgIso"><a href="ProgramIso.html">等値面の可視化</a></dd>
+    <dd id="nProg06"><a href="Program06.html">可視化パイプライン</a></dd>
+    <dd id="nProg07"><a href="Program07.html">レイキャスティングの実装</a></dd>
+    <dd id="nProg08"><a href="Program08.html">PBVRの実装</a></dd>
+    <dd id="nAppendix"><a href="Appendix.html">付録：プログラム集（仮）</a></dd>
+  </dl>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#sidebar -->
+
+  <div id="main">
+  <!-- InstanceBeginEditable name="mainArea" -->
+  <h2>インストールの準備</h2>
+  <p>KVSでは，描画のために，OpenGLの他にGLEW (OpenGL Extension Wrangler Library) を必要とします．<br />
+  本Tutrialでは，KVSおよびGLEW等ライブラリのインストール先は「ユーザのホームディレクトリ/local」内とします． 
+  準備として，KVSライブラリをインストールするために自分のホームディレクトリ直下に「local/kvs」を作成し，
+  また，さらに他のライブラリをインストールするために「local, local/bin, local/lib，local/include, local/include/GL」を作成しておきます．</p>
+  <p>まず「local」ディレクトリをホームディレクトリ直下に作成し，移動します．</p>
+  <p class="code">
+    $ cd 　　&lt;-- ホームディレクトリに移動<br />
+    $ mkdir local 　　&lt;-- localディレクトリの作成<br />
+    $ cd local　　　&lt;-- localディレクトリに移動
+  </p>
+  <p>「local」ディレクトリ内に必要なディレクトリを作成します．</p>
+  <p class="code">
+    $ mkdir  kvs　　&lt;-- kvsライブラリのインストール先ディレクトリの作成<br />
+	$ mkdir lib　　&lt;-- 以下その他ライブラリのインストール先ディレクトリの作成<br />
+	$ mkdir bin<br />
+	$ mkdir include<br />
+	$ mkdir include/GL<br />  
+	$ mkdir src　　&lt;-- ダウンロードしてきたソースファイルの保存先ディレクトリの作成<br />
+  </p>
+  <br />
+ <h2>環境変数を設定する</h2>
+  <p>KVSを利用するためには，環境変数『KVS_DIR』を設定する必要です．<br />
+  さらに，ここではGLEWを~/localにインストールしますので，環境変数『KVS_GLEW_DIR』も設定します．</p>
+  <p>また，KVSでインストールされるアプリケーションを使うため，$KVS_DIR/bin　をPATHに追加します．</p>
+  <p>使っているシェルにあわせて以下の１または２のいずれかの設定をして下さい．</p>
+  <h3>１． bash の場合</h3>
+  <p>~/.bashrc に以下を追記：  </p>
+  <div class="DataFile">
+    <p>export KVS_DIR=$HOME/local/kvs</p>
+    <p>export KVS_GLEW_DIR=$HOME/local </p>
+    <p>export PATH=$KVS_DIR/bin:$PATH</p>
+  </div>
+  <h3>２． tcsh の場合</h3>
+  <p>~/.tcshrc に以下を追記：</p>
+  <div class="DataFile">
+    <p>setenv KVS_DIR $HOME/local/kvs</p>
+    <p>setenv KVS_GLEW_DIR $HOME/local </p>
+    <p>setenv PATH $KVS_DIR/bin:${PATH}</p>
+  </div>
+  <p>&nbsp;</p>
+<h2>GLEW をインストールする</h2>
+  <p>GPＵ版の粒子ベースレンダリングを使用するために，GLEWライブラリが必要です．</p>
+  <p>ここ：</p>
+  <p><a href="http://glew.sourceforge.net/" target="_blank">http://glew.sourceforge.net/</a></p>
+  <p>から<strong>Source</strong> のTGZをダウンロードします．<br />
+  （2017/4/12 現在の最新版は2.0.0）</p>
+  <p>ダウンロードしたソースファイルを「~/local/src」ディレクトリに移動し，解凍，コンパイル作業を行います．</p>
+  <p class="code">
+    $ cd ~/local/src<br />
+    $ mv ダウンロード先/glew-2.0.0.tgz  .  　　&lt;-- ダウンロードしたGLEWを「local/src」に移動<br />
+    $ tar xvzf glew-2.0.0.tgz　　&lt;-- 解凍<br />
+	$ cd glew-2.0.0　　　　　　　&lt;-- 解凍先のディレクトリに移動
+  </p>
+<h4>GLEWのインストール先を変更する</h4>
+<p>makeを実行する前にMakefileの43行目あたりにある</p>
+<div class="DataFile">
+ GLEW_PREFIX ?= /usr<br />
+ GLEW_DEST ?= /usr
+ </div>
+<p>を以下のように自分のインストール先ディレクトリに変更します．</p>
+<div class="DataFile">
+ GLEW_PREFIX = $(HOME)/local<br />
+ GLEW_DEST = $(HOME)/local
+</div>
+
+<p>次に，以下を実行すればインストールできます．  </p>
+<p class="code">
+	$ make　　　　　　　　　　　　&lt;-- コンパイル<br />
+	$ sudo make install　　　　&lt;-- インストール<br />
+  　　　　(パスワードを聞かれるので，自分のパスワードを入力する)
+</p>
+<br />
+<h2>ＫＶＳをインストールする</h2>
+<p>~/local/srcディレクトリに戻ってから<br />
+Gitを使ってソースをダウンロードします．ソースファイルの保存先は「kvs-src」とします．</p>
+<p class="code">
+	$ cd ~/local/src<br />
+	$ git  clone   https://github.com/naohisas/KVS.git kvs-src 　　　&lt;-- ソースファイルのダウンロード
+ </p>
+<!--
+<hr />
+<h4>タイムアウトになる場合</h4>
+<p>学内では，ネットワークのプロキシが通っていないと接続できないため，subversion のプロキシ設定をします．</p>
+<p>ホームディレクトリにある .suversion ディレクトリ内の servers というファイルを開きます．</p>
+<p>ファイル内の [global] いかにある</p>
+<div class="DataFile">
+  <p># http-proxy-host = defaultproxy.whatever.com</p>
+  <p># http-proxy-port = 7000</p>
+</div>
+<p>を</p>
+<div class="DataFile">
+  <p>http-proxy-host = proxy.ritsumei.ac.jp</p>
+  <p>http-proxy-port = 3128</p>
+</div>
+<p>に変更する．</p>
+<p class="pRed">（※　行のはじめに空白があってはいけません）</p>
+<p>作業フォルダに戻って再度　svn... を実行すればダウンロードができるようになっています．</p>
+<hr />
+-->
+<p>&nbsp;</p>
+<p>ダウンロードしてできたフォルダ『kvs-src』に移動します．</p>
+<p class="code">$ cd kvs-src</p>
+<p>CUDAやOpenCVなど他のライブラリとし一緒に使用したい場合は，フォルダ内にある『kvs.conf』内で，使用したいライブラリを「１」にする（以下は，標準のkvs.conf）．使用したいライブラリは事前にインストールしておく必要があります．</p>
+<div class="DataFile">
+  <p>KVS_ENABLE_OPENGL = 1 </p>
+  <p>KVS_ENABLE_OSMESA = 0 </p>
+  <p>KVS_ENABLE_GLU = 1 </p>
+  <p>KVS_ENABLE_GLEW = 1 </p>
+  <p>KVS_ENABLE_OPENMP = 0 </p>
+  <p>KVS_ENABLE_DEPRECATED = 0 </p>
+  <p>&nbsp;</p>
+  <p>KVS_SUPPORT_CUDA = 0 </p>
+  <p>KVS_SUPPORT_GLUT = 1 </p>
+  <p>KVS_SUPPORT_OPENCV = 0 </p>
+  <p>KVS_SUPPORT_QT = 0 </p>
+ </div>
+<p></p>
+<p>オプションが選択できたら『kvs.conf』を保存し，KVSをコンパイルする<br />
+  （ここではkvs.confは変更していません）．</p>
+<p class="code">$ make</p>
+<p>エラーなくコンパイルできれば，</p>
+<p class="code">$ make install</p>
+<p>を実行すると，最初に設定した KVS_DIR にインストールされます．</p>
+<p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+<!--  <p align="right"><a href="Program/ViewPolygon_Ex.tgz">ViewPolygon_Ex.tgz</a></p>-->
+  <p align="right">Modefied at April 12, 2017  </p>
+
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#main -->
+
+  <div id="fotter">
+    <p><a href="index.html">TOP</a>　</p>
+  </div>
+  <!-- end div#fotter -->
+    
+</div>
+<!-- end div#wrapper -->
+
+</body>
+<!-- InstanceEnd --></html>

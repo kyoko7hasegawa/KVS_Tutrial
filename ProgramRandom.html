@@ -1,0 +1,280 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>KVS Programming Guide</title>
+<!-- InstanceEndEditable -->
+<link href="base.css" rel="stylesheet" type="text/css" media="screen, tv, projection" />
+<!-- Code 装飾用 Google google-code-prettify -->
+<!--<link rel="stylesheet" type="text/css" href="code-prettify/src/prettify.css">-->
+<!--<link rel="stylesheet" type="text/css" href="../code-prettify/styles/desert.css">-->
+<link rel="stylesheet" type="text/css" href="code-prettify/styles/tomorrow-night-blue.css">
+<script type="text/javascript" src="code-prettify/src/prettify.js"></script>
+<script type="text/javascript" src="code-prettify/src/lang-css.js"></script>
+<!-- ここまで -->
+
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<!-- InstanceParam name="id" type="text" value="ProgramRandom" -->
+</head>
+
+<body onload="PR.prettyPrint()" id="ProgramRandom">
+<div id="wrapper">
+  <div id="header">
+    <h1>KVS vsrsion 2.x Tutorial</h1>
+    <p>&nbsp;</p>
+    <p align="right"> kvs version 2.9</p>
+    <p align="right">kvs : <a href=" https://github.com/naohisas/KVS" target="_blank"> https://github.com/naohisas/KVS</a></p>
+  </div>
+  <!-- end div#header -->
+  
+  <div id="sidebar">
+  <!-- InstanceBeginEditable name="sidebarArea" -->
+  <dl>
+    <dd id="nInstall"><a href="install.html">インストール</a></dd>
+    <dd id="nBasis"><a href="basis.html">基本的な使い方</a></dd>
+    <dd id="nTransFunc"><a href="transFunc.html">伝達関数を調整する</a></dd>
+    <dd id="nDICOM"><a href="DICOM.html">DICOMデータを読み込む</a></dd>
+  </dl>
+  <p><strong><br />
+  </strong></p>
+  <p><strong> <a href="Program.html">KVSプログラムの作成</a></strong></p>
+  <dl>
+    <dd id="nProg01"><a href="Program01.html">3次元ベクトルの演算</a></dd>
+    <dd id="nProgMatrix"><a href="ProgramMatrix.html">行列クラス</a></dd>
+    <dd id="nProg02"><a href="Program02.html">行列の演算（行列クラスの応用）</a></dd>
+    <dd id="nProgRandom"><a href="ProgramRandom.html">乱数生成</a></dd>
+        <dt>乱数クラスについて</dt>
+        <dt><a href="#sec2">例　円周率の数値計算</a></dt>
+        <dt><a href="#sec3">問題　円周上に点を生成してplot</a></dt>
+        <dt><a href="#sec4">Gnuplot のインストール</a></dt>
+    <dd id="nProg03"><a href="Program03.html">オブジェクトについて</a></dd>
+    <dd id="nProg04"><a href="Program04.html">構造型ボリュームデータの作成</a></dd>
+    <dd id="nProg05"><a href="Program05.html">面データの可視化</a></dd>
+    <dd id="nProgIso"><a href="ProgramIso.html">等値面の可視化</a></dd>
+    <dd id="nProg06"><a href="Program06.html">可視化パイプライン</a></dd>
+    <dd id="nProg07"><a href="Program07.html">レイキャスティングの実装</a></dd>
+    <dd id="nProg08"><a href="Program08.html">PBVRの実装</a></dd>
+    <dd id="nAppendix"><a href="Appendix.html">付録：プログラム集（仮）</a></dd>
+  </dl>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#sidebar -->
+
+  <div id="main">
+  <!-- InstanceBeginEditable name="mainArea" -->
+  <h2>乱数クラスについて</h2>
+  <p>KVSには乱数生成のためのクラスとして</p>
+  <p>一様乱数：MersenneTwister</p>
+  <p>正規乱数：BoxMuller</p>
+  <p>の2つの乱数のクラスがあります．</p>
+  <p>これらの乱数クラスには，乱数値を戻り値にするほか，種を設定したり，分布を変更したりすることができます．</p>
+  <p>&nbsp;</p>
+  <p>ここでは，乱数クラスのもつメソッドについて説明したあと，円周率をモンテカルロ法で求めるプログラムを作成します．</p>
+  <p>同時に平均と標準偏差も求めてみましょう．</p>
+  <p>&nbsp;</p>
+<p></p>
+  <p></p>
+  <h3>乱数クラスのメソッド</h3>
+<p>乱数クラスには，乱数値を戻り値にするほか，種を設定したり，分布を変更したりすることができます．</p>
+<p>詳しくはソースコード</p>
+<p class="pRed">　(KVSのソースをダウンロードしたディレクトリ) kvs-src/Source/Core/Numeric/MersenneTwister.h</p>
+<p class="pRed">　(KVSのソースをダウンロードしたディレクトリ) kvs-src/Source/Core/Numeric/BoxMuller.h</p>
+<p></p>
+<p>を見てみて下さい．ここでは，各メソッドについて使い方を説明します．</p>
+<h4>コンストラクタ</h4>
+<p>乱数のコンストラクタとしては，次の2種類が用意されています．</p>
+<code><pre class="prettyprint lang-cpp">
+// 引数なし
+kvs::MersenneTwister uniRand;	// 一様乱数
+kvs::BoxMuller normRand;	// 正規乱数
+// 乱数シードを設定する
+kvs::MersenneTwister uniRand2( 261422 );	// 一様乱数
+kvs::BoxMuller normRand2( 261422 );		// 正規乱数
+</pre></code>
+<p></p>
+<h4>乱数を生成する</h4>
+<p>乱数を生成するためには operator () を用います．</p>
+<p>KVSでは標準で</p>
+<ul>
+  <li>一様乱数　：　[0, 1] の区間の一様乱数</li>
+  <li>正規乱数　：　N(0, 1 ) の正規分布をもつ正規乱数</li>
+</ul>
+<p>を生成します．</p>
+<code><pre class="prettyprint lang-cpp">
+std::cout &lt;&lt; &quot;[0, 1] : 一様乱数 &quot; &lt;&lt; uniRand() &lt;&lt; std::endl;
+std::cout &lt;&lt; &quot;N(0, 1) : 正規乱数 &quot; &lt;&lt; normRand() &lt;&lt; std::endl;
+
+std::cout &lt;&lt; &quot;[0, 1] : 一様乱数 &quot; &lt;&lt; uniRand2() &lt;&lt; std::endl;
+std::cout &lt;&lt; &quot;N(0, 1) : 正規乱数 &quot; &lt;&lt; normRand2() &lt;&lt; std::endl;
+</pre></code>
+<h4>乱数の分布を変更する</h4>
+<p>一様乱数で区間 [0, n] となるように値を返すには：</p>
+<p>　　rand( const double n )</p>
+<p>正規分布の N( mu, sigma2 ) に従った乱数の値を返すには：</p>
+<p>　　rand( const double mu, const double sigma2 )</p>
+<p>　　aただし，mu; 平均，sigma2 ：分散</p>
+<p>とします．</p>
+<code><pre class="prettyprint lang-cpp">
+// 乱数の分布を変更する
+std::cout &lt;&lt; &quot;[0, 100] : 一様乱数 &quot; &lt;&lt; uniRand.rand( 100 ) &lt;&lt; std::endl;
+std::cout &lt;&lt; &quot;N(2, 10) : 正規乱数 &quot; &lt;&lt; normRand.rand(2, 10) &lt;&lt; std::endl;
+</pre></code>
+<a name="sec2"></a>
+<h2>例　モンテカルロ法を使って円周率を求める</h2>
+<p>&nbsp;</p>
+<p>モンテカルロ法で面積を求めるには，紙の上に適当な図形を描いて紙の上に均等に砂粒をばらまき，砂粒が図形内に入った割合を紙全体の面積にかけます．これによりおおよその面積を求めることができます．</p>
+<p></p>
+<p>ここでは(半径１の円面積)/4 をモンテカルロ法で求めた後に4をかけて円周率を求めています．</p>
+<p>円周率を求めるためには，[0, 1]×[0, 1]の矩形内に乱数を生成し，その中からx<sup>2</sup> + y<sup>2</sup> &lt; 1 内に入る点を数えます．</p>
+<p></p>
+<p>&nbsp;</p>
+<h3>1.　作業ディレクトリの作成</h3>
+<p>作業ディレクトリに「CreateRandom」というディレクトリを作成して，移動して下さい． <br />
+</p>
+<p class="code">
+$ mkdir   CreateRandom<br />
+$ cd CreateRandom 
+</p>
+<h3>&nbsp;</h3>
+<h3>2.　main.ccp の作成</h3>
+<p>「main.cpp」というファイルを作成して下さい．</p>
+<p>一様乱数を生成するために，<span class="pRed">kvs::MersenneTwister</span> クラスのインスタンスを生成します．</p>
+<p>また，ここでは試行回数を1000回とします．</p>
+<code><pre class="prettyprint lang-cpp">
+int main( void )
+{
+   kvs::MersenneTwister uniRand;	// 一様乱数
+   kvs::BoxMuller normRand;	// 正規乱数
+ 
+   // 乱数の試行回数
+   const int trialNum = 1000;
+ 
+   return ( 0 );
+}
+</pre></code>
+<p>&nbsp;</p>
+<h3>3.　初期値の設定</h3>
+<p>x<sup>2</sup> + y<sup>2</sup> &lt; 1 内に入る点の数を数えるための変数，および，平均と標準偏差を計算するための変数に0を代入します． </p>
+<code><pre class="prettyprint lang-cpp">
+// 円内に発生した点の数を数える
+int num = 0;
+// 平均と標準偏差を求めるための初期値
+double uniAve = 0.0, uniDp = 0.0;
+</pre></code>
+<p>&nbsp;</p>
+<h3>4. 数を数える</h3>
+<p>点（x, y) として[0, 1] の乱数をそれぞれ生成し，x<sup>2</sup> + y<sup>2</sup> &lt; 1 内に入る点の数を数える．</p>
+<p>さらに，平均と標準偏差を求めるために和と２乗和を計算する．</p>
+<code><pre class="prettyprint lang-cpp">
+for( int i=0; i&lt;trialNum; i++ ) {
+   // [0, 1] 内で乱数を生成
+   double x = uniRand();
+   double y = uniRand();
+   // x*x + y*y &lt; 1 内に生成された点の数を数える
+   if( ( x*x + y*y ) &lt; 1.0 )
+      num++;
+ 
+   // 和と2乗和を計算
+   uniAve += x;
+   uniDp += ( x * x );
+}
+</pre></code>
+<p>&nbsp;</p>
+<h3>5. 円周率を求める</h3>
+<p>生成した総数に対して x<sup>2</sup> + y<sup>2</sup> &lt; 1 内に入った数の割合を調べて円周率を求める．</p>
+<p>また，平均と標準偏差を求める（[0,1] の一様乱数の標準偏差は1/12 になることを確認してみよう）．</p>
+<code><pre class="prettyprint lang-cpp">
+// 円周率を求める
+double pi = (double)num/(double)trialNum * 4.0;
+std::cout &lt;&lt; num &lt;&lt; &quot; &quot; &lt;&lt; trialNum &lt;&lt; std::endl;
+std::cout &lt;&lt; &quot;円周率 : &quot; &lt;&lt; pi &lt;&lt; std::endl;
+ 
+// 平均と標準偏差を求める
+uniAve /= (double)trialNum;
+uniDp = uniDp/(double)trialNum - uniAve*uniAve;
+std::cout &lt;&lt; &quot;-- 一様乱数 -- &quot; &lt;&lt; std::endl;
+std::cout &lt;&lt; &quot;平均 : &quot; &lt;&lt; uniAve &lt;&lt; &quot; 標準偏差 : &quot; &lt;&lt; uniDp &lt;&lt; std::endl;
+</pre></code>
+<p>&nbsp;</p>
+<h3>6.　まとめ</h3>
+<p>以上をまとめたプログラムはこちら：　<a href="Program/CreateRandom.tgz">CreateRandom.tgz</a></p>
+<p>&nbsp;</p>
+<h3>7.　コンパイルと実行</h3>
+<p>作成したプログラムをコンパイル，実行してみましょう．</p>
+<p>KVSプログラムをコンパイルするためにはkvsmakeコマンドを用いてMakefileを作成すると簡単にコンパイルを行うことができます．</p>
+<p class="code">$ kvsmake -G　　　　　　　　　　&lt;-- Makefile の作成</p>
+<p class="code">$ kvsmake　　　　　　　　　　　　&lt;-- コンパイル</p>
+<p>エラーなくコンパイルできたら，実行してみましょう．</p>
+<p>以下のような実行結果が得られると思います．</p>
+<p class="code">
+  $ ./CreateRandom　　　　　　　　　　　&lt;-- Windows環境ではCreateRandom.exe となります<br />
+[0, 1] : 一様乱数 0.352003<br />
+N(0, 1) : 正規乱数 0.24365<br />
+[0, 1] : 一様乱数 0.606438<br />
+N(0, 1) : 正規乱数 -0.447015<br />
+[0, 100] : 一様乱数 66.4808<br />
+N(2, 10) : 正規乱数 -8.92791<br />
+円周率 : 3.08<br />
+-- 一様乱数 --<br />
+平均 : 0.482417  標準偏差 : 0.0840314
+</p>
+<p></p>
+<p>&nbsp;</p>
+<p>以上のように，KVSでは乱数列を扱うことができます．</p>
+<p>&nbsp;</p>
+<a name="sec3"></a>
+<h2>問題　円上にランダムに点を生成し，plot してみよう</h2>
+<p>円上にランダムに点群を生成して，ファイルに出力し，その結果をGnuplot を使って可視化してみましょう．</p>
+<p>円上に点を生成するためには媒介変数表示を使って</p>
+<p> x = r cos( θ )</p>
+<p>y = r cos( θ )</p>
+<p></p>
+<p>　（ただし，r は半径）</p>
+<p>x, y 座標を決定します．</p>
+<p>&nbsp;</p>
+<!--<p align="right"><a href="Program/CreateRandom_Ex.tar.gz">CreateRandom_Ex.tar.gz</a></p>-->
+<p>&nbsp;</p>
+<a name="sec4"></a>
+<h2>Gnuplot のインストール</h2>
+<h3>1) Gnuplotのインストール</h3>
+<p>gnuplot のWebページ：<a href="http://www.gnuplot.info/" target="_blank">http://www.gnuplot.info/</a><br />
+からダウンロードします．</p>
+<p>Macの場合は，同Webページの
+「<a href="http://ricardo.ecn.wfu.edu/pub/gnuplot/" target="_blank"> contributed executables for OSX</a>」<br />
+から<strong>gnuplot-5.0.5-quartz.pkg</strong>ファイルをダウンロードします．<br />
+（2017年4月21日現在）
+</p>
+<p>ダブルクリックしてインストールすれば，アプリケーションフォルダに「gnuplot」がインストールされます．</p>
+
+<h3>2) 結果の確認</h3>
+<p>ファイルに出力した点群をgnuplot で表示するには，gnuplot 上で</p>
+<p class="code">&gt; set size square&nbsp;&nbsp;&nbsp;&nbsp;　　　　&lt;-- 表示画面を正方形にする</p>
+<p class="code">&gt; plot &quot;test.dat&quot; with points pointtype 7 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;　　&lt;-- ファイルから点群を読み込み●で描画</p>
+<p>この結果は以下の通り．</p>
+<p>&nbsp;</p>
+<div class="image">
+  <p>&nbsp;</p>
+  <p><img src="img/Circle.png" width="400" alt="Result of PNUPLOT" /></p>
+  <p>Gnuplot による点群描画結果</p>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p align="right">Updated at July 4, 2014</p>
+<p align="right">at April 21, 2017</p>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#main -->
+
+  <div id="fotter">
+    <p><a href="index.html">TOP</a>　</p>
+  </div>
+  <!-- end div#fotter -->
+    
+</div>
+<!-- end div#wrapper -->
+
+</body>
+<!-- InstanceEnd --></html>

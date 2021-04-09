@@ -1,0 +1,227 @@
+@charset "utf-8";
+/*　formatting style
+---------------------------------------*/
+* {
+	font-style: normal;
+	margin: 0px;
+	padding: 0px;
+}
+body {
+	font-size: 75%;
+	line-height: 1.6;
+	color: #333333;
+	background-color: #999999;
+	font-family: sans-serif;
+}
+/* link style
+---------------------------------------*/
+a:link {
+	color: #690;
+	text-decoration: underline;
+}
+a:visited {
+	color: #C03;
+	text-decoration: underline;
+}
+a:hover {
+	color: #000000;
+	text-decoration: none;
+}
+a:active {
+	text-decoration: none;
+	position: relative;
+	left: +1px;
+	top: +1px;
+}
+/* basic layout
+---------------------------------------*/
+#wrapper {
+	background-color: #ffffff;
+	width: 800px;
+	margin-right: auto;
+	margin-left: auto;
+	border-right: 1px solid #666666;
+	border-left: 1px solid #666666;
+}
+#main {
+	float: right;
+	width: 598px;
+	margin-bottom: 10px;
+	padding-top: 10px;
+}
+#sidebar {
+	float: left;
+	width: 200px;
+	margin-bottom: 10px;
+	padding-top: 10px;
+}
+#fotter {
+	background-color: #7fb3b3;
+	clear: both;
+	color: #d4f6f6;
+}
+/* header style
+---------------------------------------*/
+#header {
+	color: #d4f6f6;
+	background-color: #7fb3b3;
+	height: 100px;
+	border-top: 1px solid #ffffff;
+	border-right: 0px none #ffffff;
+	border-bottom: 1px solid #ffffff;
+	border-left: 1px solid #ffffff;
+}
+/* sidebar style
+---------------------------------------*/
+#sidebar dl {
+	margin:0px;
+	padding:0px;
+	list-style:none;	
+}
+#sidebar dd {
+	color: #007373;
+	background-color: #ffffff;
+	width: 194px;
+	margin-right: 3px;
+	margin-left: 3px;
+}
+#sidebar dt {
+	background-color: #FFF;
+	width: 180px;
+	height: 2em;
+	line-height: 2em;
+	color: #007373;
+	text-align: right;
+	margin: 0px 0px 0px 10px;
+	padding: 0px 0px 0px 0px;
+	border-top: 1px none #007373;
+	border-right: 1px dashed #007373;
+	border-bottom: 1px dashed #007373;
+	border-left: 1px dashed #007373;
+}
+/*#sidebar dd li {
+	list-style: none;
+	margin-bottom: 3px;
+}*/
+#sidebar dd #nTransFunc a {
+	border-style: none;
+}
+#install #sidebar #nInstall a,
+#transFunc #sidebar #nTransFunc a, 
+#basis #sidebar #nBasis a,
+#DICOM #sidebar #nDICOM a,
+#Prog01 #sidebar #nProg01 a,
+#Prog02 #sidebar #nProg02 a,
+#Prog03 #sidebar #nProg03 a,
+#Prog04 #sidebar #nProg04 a,
+#Prog05 #sidebar #nProg05 a,
+#Prog06 #sidebar #nProg06 a,
+#Prog07 #sidebar #nProg07 a,
+#Prog08 #sidebar #nProg08 a,
+#Appendix #sidebar #nAppendix a,
+#ProgIso #sidebar #nProgIso a,
+#ProgramMatrix #sidebar #nProgMatrix a,
+#ProgramRandom #sidebar #nProgRandom a
+{
+	color: #b9dddd;
+	background-color: #007373;
+}
+
+#sidebar dd a {
+	background-color: #b9dddd;
+	width: 190px;
+	height: 2.5em;
+	line-height: 2.5em;
+	color: #007373;
+	text-decoration: none;
+	border-bottom: 2px solid #FFFFFF;
+	text-align: right;
+	display: block;
+}
+#sidebar dd a:hover {
+	background-color: #BADECC;
+}
+/* main style
+---------------------------------------*/
+#main h2 {
+	color: #0700A2;
+	line-height: 1.8;
+	text-align: left;
+	text-indent: 25px;
+	vertical-align: middle;
+	font-size: 16px;
+	font-weight: bold;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	border-top: 2px double #060;
+	border-bottom: 2px solid #060;
+	border-right-color: #060;
+	border-left-color: #060;
+	background-image: url(img/square.png);
+	background-repeat: no-repeat;
+	background-position: left center;
+	background-color: #deffe8;
+}
+#main h3 {
+	color: #03F;
+	text-indent: 1em;
+	border-bottom: 1px dotted #0CF;
+	margin-right: 20px;
+	margin-left: 1em;
+}
+#main h4 {
+	font-weight: bold;
+	list-style: square;
+	text-decoration: underline;
+}
+
+
+
+#main .code {
+	color: #FFFFFF;
+	background-color: #000;
+	/*text-indent: 2em;*/
+	padding-left:10px;
+	margin-right: 20px;
+	margin-left: 5px;
+}
+#main .image {
+	text-align: center;
+	border: 1px solid #39F;
+	margin-right: 20px;
+	margin-left: 20px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	margin-bottom: 1em;
+}
+#main .DataFile {
+	line-height: 1.1em;
+	background-color: #E3FFFF;
+	border-top: 1px solid #06F;
+	border-bottom: 1px solid #06F;
+	border-right-style: none;
+	border-left-style: none;
+	border-right-color: #06F;
+	border-left-color: #06F;
+	/*text-indent: 1em;*/
+	padding-left:1em;
+	margin: 1em 5px;
+}
+#main .pRed {
+	font-weight: bold;
+	color: #F00;
+}
+#main ul li {
+	list-style: none;
+	text-indent: 3em;
+}
+#main .think {
+	color:#F90;
+}
+
+#Appendix #main dl {
+	margin-left: 2em;
+}
+#Appendix #main dd{
+	margin-left: 3em;
+}
