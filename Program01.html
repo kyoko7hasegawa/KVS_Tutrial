@@ -44,6 +44,7 @@
     <dd id="nProg01"><a href="Program01.html">3次元ベクトルの演算</a></dd>
       <dt id="nProg1"> ベクトルクラスについて</dt>
       <dt> <a href="#sec2">例　３次元ベクトルの演算</a></dt>
+	  <dt><a href="#sec3">問題　ベクトルの直交性</a></dt>
 
     <dd id="nProgMatrix"><a href="ProgramMatrix.html">行列クラス</a></dd>
     <dd id="nProg02"><a href="Program02.html">行列の演算（行列クラスの応用）</a></dd>
@@ -125,7 +126,7 @@
   </tr>
 </table>
 
-<p>KVS内でtypdef によって省略形が定義されているだけで，</p>
+<p>KVS内でtypdef によって省略形が定義されていますが，基本的にはテンプレートクラスとして定義されています．そのため，</p>
 <code>
 <pre class="prettyprint lang-cpp">
 kvs::Vector3f a;
@@ -141,67 +142,58 @@ kvs::Vector3&lt;float &gt; a;</pre></code>
 <code>
 <pre class="prettyprint lang-cpp">
 kvs::Matrix33&lt;unsigned char&gt; b;</pre></code>
-<p>のように記述します．</p>
-
+<p>のように記述すれば良い．</p>
+  <p>&nbsp;</p>
+	  
 <!--- ベクトルクラスについて --->
 <h3>ベクトルクラスのもつメソッド</h3>
-<p>ベクトルクラスに用意されているメソッドは他に以下のようなものがあります．</p>
+<p>ベクトルクラスに用意されているメソッドは値の取得や代入，正規化などベクトルの演算に必要なメソッドが用意されています．</p>
 <p>実際には，</p>
 <p class="pRed">　(KVSのソースをダウンロードしたディレクトリ) kvs-src/Source/Core/Matrix/Vector3.h</p>
 <p>を見てみて下さい．ここでは，各メソッドについて使い方を説明します．</p>
+	 
+<p>&nbsp;</p>
 <h4>コンストラクタ</h4>
 <p>int型のベクトルkvs::Vector3i を作成する方法としては以下のように4種類用意されています．</p>
-<p>※初期値を指定しないでオブジェクトを生成した場合には，初期値 0 が入ります．</p>
+<p>※初期値を指定しないでオブジェクトを生成した場合には，全成分の初期値は 0 になります．</p>
 <code>
 <pre class="prettyprint lang-cpp">
-// 初期値を指定しない
+// 1．初期値を指定しない
 kvs::Vector3i a;
 
-// x, y, z 成分を１つ１つ記述する
-kvs::Vector3i b( 1, 2, 0 );
+// 2．x, y, z 成分を１つ１つ記述する
+kvs::Vector3i a( 1, 2, 0 );
 
-// 2次元のベクトル(kvs::Vector2)とz成分を指定する
-kvs::Vector2i t( 1, 1 );      // 2次元のint型ベクトル
-kvs::Vector3i c( t, 3 );
+// 3．2次元のベクトルクラス(kvs::Vector2)で定義されたオブジェクとz成分を指定する
+kvs::Vector2i t( 1, 1 );      // 2次元のint型ベクトルクラスのオブジェクトを生成
+kvs::Vector3i a( t, 3 );
 
-// 3次元配列を代入する
+// 4．3次元配列を代入する
 int element[3] = { 1, 2, 3 };
-kvs::Vector3i d( element );
+kvs::Vector3i a( element );
 </pre></code>
-<h4>値の代入：　演算子 [ ], 　zero( ),　 set( )</h4>
-<p>配列と同様に演算子[ ] を使えるほか，全成分を零にするメソッド zero( ) や値を代入するメソッド set( ) があります．</p>
-<p>また，set( ) は引数の渡し方によってオーバーロードされています．</p>
+	  
+<h4>値の代入：　演算子 [ ], 　set( )</h4>
+<p>配列と同様に演算子[ ] を使えるほか，値を代入するメソッド set( ) があります．</p>
+<p>また，set( ) は引数の渡し方によってオーバーロードされており，コンストラクタと同様に「x, y, z 成分を１つ１つ記述する」，「2次元のベクトルとz成分を指定する」，「3次元配列を代入する」の3種類があります．</p>
 <code>
 <pre class="prettyprint lang-cpp">
+kvs::Vector3i b;
 // 演算子 [ ] で値を代入する
-a[0] = 1;        a[1] = 10;        a[2] =5;
- 
-// 成分すべてを零にする
-a.zero( );
- 
+b[0] = 1;        b[1] = 10;        b[2] =5;
+  
 // x, y, z 成分を１つ１つ指定する
-a.set( 1, 2, 2 );
+b.set( 1, 2, 2 );
  
-// 2次元のベクトル ( kvs::Vector2 ) と z 成分を指定する
+// 2次元のベクトルと z 成分を指定する
 kvs::Vector2i t( 1, 1 );　　　　
-a.set( t, 5 );
+b.set( t, 5 );
  
 // 3次元配列を代入する
 int element[3] = { 1, 2, 3 };
-a.set( element );
+b.set( element );
 </pre></code>
-
-<h4>全成分をクリアするための静的メンバ関数：　Zero( ), All( )</h4>
-<p>インスタンス化なしに使える静的なメンバ関数として，Zero( ) は全成分を零とし，All( ) は全成分を引数で与えた値にする関数があります．</p>
-<code>
-<pre class="prettyprint lang-cpp">
-//全ての成分を零に指定する
-a = kvs::Vector3f::Zero( );
- 
-//全ての成分を 3 に指定する
-a = kvs::Vector3f::All( 3.0 );
-</pre></code>
-
+	  
 <h4>値の取得：　 演算子[ ], 　x( ),　 y( ),　 z( )</h4>
 <p>代入と同様に演算子 [ ] が使えるほか，ベクトルの x, y, z 成分を取得するメソッド x( ), y( ), z( )  があります．</p>
 <code><pre class="prettyprint lang-cpp">
@@ -211,18 +203,49 @@ x0 = a[0];        y0 = a[1];        z0 = a[2];
  
 // 成分を指定して表示する
 std::cout &lt;&lt; a.x( ) &lt;&lt; &quot;,  &quot; &lt;&lt; a.y( ) &lt;&lt; &quot;,  &quot; &lt;&lt; a.z( ) &lt;&lt; std::endl;
-</pre>
-</code>
-<h4>標準出力：　print( ),　 出力演算子&lt;&lt;</h4>
-<p>ベクトルの成分を：</p>
-<p class="code">1 2 3</p>
-<p>のように標準出力させるメソッド print( ) と，出力演算子&lt;&lt; があります．</p>
+</pre></code>
+
+<h4>全成分のクリア：setZero(), setOnes, setUnitX(), setConstant(), setRandom()</h4>
+	  <p>値を直接代入する他に，成分を固定の値にするメソッドがあります．</p>
+      <p>setZero()：全成分を 0 にする</p>
+	  <p>setOnes()：全成分を 1 にする</p>
+	  <p>setUnitX(), setUnitY(), setUnitZ()：それぞれx, y, z 軸方向の単位ベクトルに設定する</p>
+	  <p>setConstant()：全成分を引数に渡した値にする</p>
+	  <p>setRandom()：全成分に乱数を設定する </p>
+<code><pre class="prettyprint lang-cpp">
+kvs::Vector3f c(10.0, 10.0, 10.0);
+c.setZero();	// 全成分を 0  にする
+c.setOnes();	// 全成分を 1  にする
+c.setUnitX();	// x軸方向たの単位ベクトルに設定する（dの成分は (0, 1, 1）となる）
+
+c.setConstant(5.0);  // 全成分を 5 に設定
+
+// 全成分に乱数を設定する
+c.setRandom();	// 引数がない場合は[0, 1]の一様乱数を設定
+c.setRandom( 1000 );  // 引数をシードとして[0, 1]の一様乱数を設定
+c.setRandom( -1.0, 1.0 );	// [-1, 1]の範囲で乱数を設定
+c.setRandom( -1.0, 1.0, 1000 );	// [-1, 1]の範囲でシードを1000 として乱数を設定
+</pre></code>
+	  	  
+<h4>ベクトルを返す静的メンバ関数：　Zero(), Ones(), UnityX(), Constant(), Random()</h4>
+<p>インスタンス化なしに使える静的なメンバ関数として，全成分をクリアする関数と同種の機能が用意されており，関数名が以下のようになります：</p>
+      <p>Zero()：全成分が 0 のオブジェクト</p>
+	  <p>Ones()：全成分を 1 にする</p>
+	  <p>UnitX(), setUnitY(), setUnitZ()：それぞれx, y, z 軸方向の単位ベクトルに設定する</p>
+	  <p>Constant()：全成分を引数に渡した値にする</p>
+	  <p>Random()：全成分に乱数を設定する </p>	  
 <code>
 <pre class="prettyprint lang-cpp">
-a.print( );
-std::cout << a;
+kvs::Vector3f d;
+d = kvs::Vector3f::Zero( );  // 全成分が 0 のベクトルを代入
+d = kvs::Vector3f::Ones( );  // 全成分が 1 のベクトルを代入
+d = kvs::Vector3f::UnitX( ); // x軸方向たの単位ベクトルを代入する
+
+d ≡ kvs::Vector3f::Constant(3.0):  // 全成分が 3 のベクトルを代入 
+
+//全ての成分を 3 に指定する
+d = kvs::Vector3f::All( 3.0 );
 </pre></code>
-<p>は同じように標準出力されます．</p>
 
 <h4>正規化：　normalize( )，normalized( )　</h4>
 <p>ベクトルを正規化するメソッドには，次の2種類あります．</p>
@@ -232,25 +255,51 @@ std::cout << a;
 <code>
 <pre class="prettyprint lang-cpp">
 // 自身を正規化
-kvs::Vector3d x( 1.0, 2.0, 3.0 );
-x.normalize( );
+kvs::Vector3d e( 1.0, 2.0, 3.0 );
+e.normalize( );
  
 // 正規化した値を返す（自身を変更しない）
-kvs::Vector3d y( 1.0, 2.0, 3.0 );
-kvs::Vector3d z = y.normalized( );
+kvs::Vector3d f( 1.0, 2.0, 3.0 );
+kvs::Vector3d g = f.normalized( );
 </pre></code>
 
 <h4>長さ：　length( ), length2( ) </h4>
-<p>ベクトルの長さ，長さの２乗を返すメソッド length( ), length2( ) があります．</p>
-<p>また，length( ) はdouble型の値を戻り値にします．</p>
+<p>ベクトルの長さ，長さの２乗を返すメソッド length( ), squaredLength( ) があります．</p>
+<p>また，これらはdouble型の値を戻り値にします．</p>
 <code>
 <pre class="prettyprint lang-cpp">
+kvs::Vector3d h( 1.0, 2.0, 3.0 );
 // ベクトルの長さを返す
-double v = y.length( );
+double v = h.length( );
  
 // ベクトルの長さの２乗を返す
-double w = y.length2( );
+double w = h.squaredLength( );
 </pre></code>
+
+<h4>内積：　dot( )，　外積：　cross( ) ，　交換：　swap( )</h4>
+<p>内積は演算子 * ではなくメソッド dot( ) を使い，外積はメソッド cross( ) を使います．</p>
+<p>また，ベクトルの値を交換するメソッド swap( ) があります．</p>
+<code><pre class="prettyprint lang-cpp">
+// 内積
+int dot = a.dot( b );
+// 外積
+c = a.cross( b );
+// 入れ替え
+a.swap( b );
+</pre></code>
+
+<p>&nbsp;</p>
+<h3>オーバーロードされた演算子</h3>
+<h4>標準出力：　演算子&lt;&lt;</h4>
+<p>ベクトルの成分を並べて：</p>
+<p class="code">1 2 3</p>
+<p>のように標準出力させることができるように，出力ストリームをオーバーロードした演算子&lt;&lt; があります．</p>
+<code>
+<pre class="prettyprint lang-cpp">
+std::cout << a << std::endl;
+</pre></code>
+ostream の参照を返すので演算子&lt;&lt; は組み合わせて使用できます．
+<p>&nbsp;</p>
 
 <h4>四則演算子：　+, 　-, 　*,　 /</h4>
 <p>演算子 + (+=) はベクトルの成分同士の足し算を行います．</p>
@@ -263,7 +312,8 @@ a+=c;
 a -= b;
 std::cout &lt;&lt; -a &lt;&lt; std::endl;</pre>
 </code>
-<p>演算子 * ( *= ) はベクトルの成分同士，スカラーとベクトルの各成分のかけ算の２種類があります．</p>
+
+<p>演算子 * ( *= ) はベクトルの成分同士または，スカラーとベクトルの各成分のかけ算の２種類があります．</p>
 <p>変数とベクトルのかけ算では，複合演算子 *= を用いる場合にはスカラーとベクトルの順番に注意して下さい．</p>
 <code>
 <pre class="prettyprint lang-cpp">
@@ -276,8 +326,7 @@ c = b*i;   // 同じ値になります
 c *= i;    // 計算可能です
 <font class="pRed">i *= c;         // !!! エラーになります !!!</font>
 </pre></code>
-<p>演算子 / (/= ) はベクトルとスカラーの割り算です．</p>
-<p>各成分をスカラーで割り算します．</p>
+<p>演算子 / (/= ) は各成分同士または，スカラーとベクトルの成分の割り算の2種類があります．</p>
 <p>かけ算の時と同様に，割り算の場合には，変数とベクトルの順番に注意して下さい．</p>
 <code>
 <pre class="prettyprint lang-cpp">
@@ -286,23 +335,13 @@ c /= i;
 d = i/c; 　　  // !!! エラーになります !!!
 i/=c; 　　　　// !!! エラーになります !!!</span>
 </pre></code>
-<h4>内積：　dot( )，　外積：　cross( ) ，　交換：　swap( )</h4>
-<p>内積は演算子 * ではなくメソッド dot( ) を使い，外積はメソッド cross( ) を使います．</p>
-<p>また，ベクトルの値を交換するメソッド swap( ) があります．</p>
-<code><pre class="prettyprint lang-cpp">
-// 内積
-int dot = a.dot( b );
-// 外積
-c = a.cross( b );
-// 入れ替え
-x.swap( y );
-</pre></code>
+
 <h4>関係演算子：　==,　 !=</h4>
 <p>ベクトル同士が等しいか（各成分の値がすべて一致するか）どうかを判定する関係演算子があります．</p>
 <p>戻り値は bool型です．</p>
 <code>
 <pre class="prettyprint lang-cpp">
-// 値が等しいかどうか
+// ベクトルが一致するかどうか
 if( a == b ) {
     std::cout &lt;&lt; &quot;a == b&quot; &lt;&lt; std::endl;
 } else if( a != b ) {
@@ -310,7 +349,8 @@ if( a == b ) {
 }
 </pre>
 </code>
-<p>以上の内容をまとめたプログラム：　<a href="Program/VectorTest.tgz">VectorTest.tgz</a></p>
+
+	  <!--<p>以上の内容をまとめたプログラム：　<a href="Program/VectorTest.tgz">VectorTest.tgz</a></p> -->
 <p><br />
 </p>
 <a name="sec2"></a>
@@ -358,9 +398,9 @@ int main( void )
 </pre>
 </code>
 
-
 <p>のようになります．</p>
 <p>このプログラムをKVSクラスを使って書き換えてみましょう．</p>
+
 <p>&nbsp;</p>
 <h3>1.　作業ディレクトリの作成</h3>
 <p>作業ディレクトリに「Vector」というディレクトリを作成して，移動して下さい． </p>
@@ -371,32 +411,30 @@ int main( void )
 <h3>2.　main.ccp の作成</h3>
 <p>「main.cpp」というファイルを作成して下さい．</p>
 <p>ここでは，3次元ベクトルを使用するために&lt;kvs/Vector3&gt;をインクルードします．</p>
-<pre class="prettyprint lang-cpp">
+<code><pre class="prettyprint lang-cpp">
 #include &lt;kvs/Vector3&gt;
  
 int main( void )
 {
    return ( 0 );
 }
-</pre></pre>
+</pre></code>
 
-<p>&nbsp;</p>
 <h3>3.　kvs::Vectorクラス</h3>
 <p><strong><em>x</em></strong>を3次元double型のベクトルとして宣言します．</p>
 <p>クラス名は<span class="pRed">kvs::Vector3d </span>となり，ここで，3は次元数，d はdouble型を表しています．</p>
-<pre class="prettyprint lang-cpp">
+<code><pre class="prettyprint lang-cpp">
 kvs::Vector3d  x;
-</pre></pre>
+</pre></code>
 <p>定義した変数に値を代入します．kvs::VectorクラスではC言語の配列と同様に添字演算子[]を用いて値を代入することができます．</p>
-<pre class="prettyprint lang-cpp">
+<code><pre class="prettyprint lang-cpp">
 x[0] = 1.0;　x[1] = 0.0;　x[2] = 0.0;
-</pre></pre>
+</pre></code>
 <p>kvs::Vectorクラスではコンストラクタを用いて変数宣言と同時に値を代入することができます．</p>
-<pre class="prettyprint lang-cpp">
+<code><pre class="prettyprint lang-cpp">
 kvs::Vector3d y( 2.0, 1.0, 1.0 );
-</pre></pre>
+</pre></code>
 
-<p>&nbsp;</p>
 <h3>4.　和，差，内積，外積の計算</h3>
 <p> kvs::Vectorクラスにメソッドとして定義してあるため，それらを利用して簡単に計算することができます．</p>
 <pre class="prettyprint lang-cpp">
@@ -438,8 +476,14 @@ std::cout &lt;&lt; x &lt;&lt; std::endl;
 <p>以上のように，KVSではベクトルを扱うことができます．</p>
 <p>&nbsp;</p>
 
+<a name="sec3"></a>
+<h2>問題　ベクトルの直交性</h2>
+2つのdouble型の3次元ベクトルを生成し，成分は[0, 1]の乱数で与える．
+この2つのベクトルが直交しているか否かを確認するプログラムを作成しなさい．
+
 <p align="right">Modefied at June 25, 2014</p>
 <p align="right">at April 17, 2017</p>
+<p align="right">at May 10, 2021</p>
 
   <!-- InstanceEndEditable -->
   </div>

@@ -166,8 +166,9 @@ a:active {
 	color: #03F;
 	text-indent: 1em;
 	border-bottom: 1px dotted #0CF;
+	border-left: solid 10px #86E6FF;
 	margin-right: 20px;
-	margin-left: 1em;
+	/*margin-left: 1em;*/
 }
 #main h4 {
 	font-weight: bold;
