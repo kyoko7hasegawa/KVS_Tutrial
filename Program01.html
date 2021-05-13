@@ -437,7 +437,7 @@ kvs::Vector3d y( 2.0, 1.0, 1.0 );
 
 <h3>4.　和，差，内積，外積の計算</h3>
 <p> kvs::Vectorクラスにメソッドとして定義してあるため，それらを利用して簡単に計算することができます．</p>
-<pre class="prettyprint lang-cpp">
+<code><pre class="prettyprint lang-cpp">
 // 和
 kvs::Vector3d sum = x + y;
 // 差
@@ -446,18 +446,17 @@ kvs::Vector3d dif = x - y;
 double prd = x.dot( y );
 // 外積
 kvs::Vector3d crs = x.cross( y );
-</pre></pre>
+</pre></code>
 
 <p>&nbsp;</p>
 <h3>5.　ベクトルの出力</h3>
 <p>  ベクトルの出力をするための<span class="pRed">演算子&lt;&lt;</span> も定義されています． </p>
-<pre class="prettyprint lang-cpp">
+<code><pre class="prettyprint lang-cpp">
 std::cout &lt;&lt; x &lt;&lt; std::endl;
-</pre></pre>
+</pre></code>
 <p>&nbsp;</p>
 <h3>6.　まとめ</h3>
 <p>以上をまとめたプログラムはこちら：　<a href="Program/Vector.tgz">Vector.tgz</a></p>
-<p>&nbsp;</p>
 <p>&nbsp;</p>
 <h3>7.　コンパイルと実行</h3>
 <p>作成したプログラムをコンパイル，実行してみましょう．</p>
@@ -472,15 +471,17 @@ std::cout &lt;&lt; x &lt;&lt; std::endl;
 <p class="code">x dot y =  2</p>
 <p class="code">x cross y = ( 0 -1 1 )</p>
 <p></p>
-<p>&nbsp;</p>
 <p>以上のように，KVSではベクトルを扱うことができます．</p>
 <p>&nbsp;</p>
 
 <a name="sec3"></a>
 <h2>問題　ベクトルの直交性</h2>
-2つのdouble型の3次元ベクトルを生成し，成分は[0, 1]の乱数で与える．
-この2つのベクトルが直交しているか否かを確認するプログラムを作成しなさい．
-
+<p>2つのdouble型の3次元ベクトルを生成する．</p>
+<p>1つは，標準入力から3成分を入力し，もう1つは[0, 1]の一様乱数で成分を与えるものとする．<br/>
+  この2つのベクトルを標準出力した後，直交しているか否か結果を出力するプログラムを作成しなさい．</p>
+<br/>
+<br/>
+	
 <p align="right">Modefied at June 25, 2014</p>
 <p align="right">at April 17, 2017</p>
 <p align="right">at May 10, 2021</p>
