@@ -98,9 +98,9 @@ int main( void )
 <p>kvs::Matrixクラスは，C言語と同様にA[0][0] = 1; のように添字演算子[]を使うこともでき，</p>
 <p>また，kvs::Vectorクラスと同様にコンストラクタを用いて変数宣言と同時に値を代入することもできます．</p>
 <code><pre class="prettyprint lang-cpp">
-kvs::Matrix33d A( 2, 1, 1,
-                  1, 2, 1,
-                  1, 1, 2 );
+kvs::Matrix33d A( 2.0, 1.0, 1.0,
+                  1.0, 2.0, 1.0,
+                  1.0, 1.0, 2.0 );
 </pre></code>
 
   <p>行列Aの固有値 λ<sub>1</sub> = λ<sub>2</sub> = 1, λ<sub>3</sub> = 4より，正規直交な固有ベクトル</p>
@@ -114,9 +114,9 @@ kvs::Matrix33d A( 2, 1, 1,
   <p></p>
 <code><pre class="prettyprint lang-cpp">
 // 固有ベクトル
-kvs::Vector3d p1 ( 1/sqrt(2), -1/sqrt(2), 0.0 );
-kvs::Vector3d p2 ( 1/sqrt(6), 1/sqrt(6), -2/sqrt(6) );
-kvs::Vector3d p3 ( 1/sqrt(3), 1/sqrt(3), 1/sqrt(3) );
+kvs::Vector3d p1 ( 1.0/sqrt(2.0), -1.0/sqrt(2), 0.0 );
+kvs::Vector3d p2 ( 1.0/sqrt(6.0), 1.0/sqrt(6.0), -2.0/sqrt(6.0) );
+kvs::Vector3d p3 ( 1.0/sqrt(3.0), 1/sqrt(3.0), 1/sqrt(3.0) );
 // 直交行列
 kvs::Matrix33d P ( p1.x(), p2.x(), p3.x(),
                   p1.y(), p2.y(), p3.y(),
@@ -159,9 +159,9 @@ std::cout &lt;&lt; L &lt;&lt; std::endl;
   <p></p>
   <p>以上のようにして行列の演算を行うことができます．</p>
   <p>行列演算クラスとしては他に，</p>
-  <p>　　LU分解（&lt;kvs/ LUDecomposer&gt;），</p>
-  <p>　　QR分解（&lt;kvs/ QRDecomposer&gt;），</p>
-  <p>　　固有値分解（&lt;kvs/ EigenDecomposer&gt;）</p>
+  <p>　　LU分解（&lt;kvs/ LUDecomposition&gt;），</p>
+  <p>　　QR分解（&lt;kvs/ QRDecomposition&gt;），</p>
+  <p>　　固有値分解（&lt;kvs/EigenDecomposition&gt;）</p>
   <p>等のクラスも用意されています．</p>
   <p>&nbsp;</p>
   <a name="sec3"></a>
@@ -181,18 +181,22 @@ kvs::EigenDecomposer&lt;double&gt; eigen( A );
 // 固有ベクトルを並べた行列Pを作成
 const kvs::Matrix&lt;double&gt;&amp; P = eigen.eigenVectors() ;
  
-// P がconstで定義されているので，転置を計算するために行列 F を定義
-kvs::Matrix33d F( P[0][0], P[1][0], P[2][0],
-                  P[0][1], P[1][1], P[2][1],
-                  P[0][2], P[1][2], P[2][2] );
+// 固有ベクトルが行ベクトルで格納されているので(列ベクトル用の）直交行列として配置し直す
+// （転置をとっても同じ）
+kvs::Matrix&lt;double&gt; F = { { P[0][0], P[1][0], P[2][0] },
+                             { P[0][1], P[1][1], P[2][1] },
+                             { P[0][2], P[1][2], P[2][2] } };
 </pre></code>
-<p>サンプルソース：<br />
+<p>使い方はサンプルソース：<br />
   (KVSのソースをダウンロードしたディレクトリ) kvs-src/Example/Numeric/EigenDecomposition</p>
+<p>をみてみよう．</p>
+<p>※ EigenDecomposition クラスに渡す行列の型はMatrix33 クラスのオブジェクトではなく一般的な Matrix クラスのオブジェクトであることに注意しましょう</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <!--<p align="right"><a href="Program/QuadricSurface_Ex.tar.gz">QuadricSurface_Ex.tar.gz</a></p>-->
 <p align="right">Modefied at June 25, 2014</p>
+	  <p align="right">at May 11, 2021</p>
   <!-- InstanceEndEditable -->
   </div>
   <!-- end div#main -->
