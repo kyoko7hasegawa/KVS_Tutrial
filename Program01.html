@@ -229,11 +229,11 @@ c.setRandom( -1.0, 1.0, 1000 );	// [-1, 1]の範囲でシードを1000 として
 	  	  
 <h4>ベクトルを返す静的メンバ関数：　Zero(), Ones(), UnityX(), Constant(), Random()</h4>
 <p>インスタンス化なしに使える静的なメンバ関数として，全成分をクリアする関数と同種の機能が用意されており，関数名が以下のようになります：</p>
-      <p>Zero()：全成分が 0 のオブジェクト</p>
-	  <p>Ones()：全成分を 1 にする</p>
-	  <p>UnitX(), setUnitY(), setUnitZ()：それぞれx, y, z 軸方向の単位ベクトルに設定する</p>
-	  <p>Constant()：全成分を引数に渡した値にする</p>
-	  <p>Random()：全成分に乱数を設定する </p>	  
+      <p>Zero()：全成分が 0 のオブジェクトを返す</p>
+	  <p>Ones()：全成分が 1 のオブジェクトを返す</p>
+	  <p>UnitX(), setUnitY(), setUnitZ()：それぞれx, y, z 軸方向の単位ベクトルを返す</p>
+	  <p>Constant()：全成分を引数で渡した値にしたたオブジェクトを返す</p>
+	  <p>Random()：全成分に乱数を設定したオブジェクトを返す </p>	  
 <code>
 <pre class="prettyprint lang-cpp">
 kvs::Vector3f d;
@@ -350,9 +350,7 @@ if( a == b ) {
 </pre>
 </code>
 
-	  <!--<p>以上の内容をまとめたプログラム：　<a href="Program/VectorTest.tgz">VectorTest.tgz</a></p> -->
-<p><br />
-</p>
+	  <!--<p>以上の内容をまとめたプログラム：　<a href="Program/VectorTest.tgz">VectorTest.tgz</a></p> --><br />
 <a name="sec2"></a>
 <h2>例　３次元ベクトルの演算  </h2>
 
