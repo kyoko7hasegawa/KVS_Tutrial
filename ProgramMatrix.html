@@ -35,7 +35,6 @@
     <dd id="nInstall"><a href="install.html">インストール</a></dd>
     <dd id="nBasis"><a href="basis.html">基本的な使い方</a></dd>
     <dd id="nTransFunc"><a href="transFunc.html">伝達関数を調整する</a></dd>
-    <dd id="nDICOM"><a href="DICOM.html">DICOMデータを読み込む</a></dd>
   </dl>
   <p><strong><br />
   </strong></p>
@@ -54,7 +53,7 @@
     <dd id="nProg06"><a href="Program06.html">可視化パイプライン</a></dd>
     <dd id="nProg07"><a href="Program07.html">レイキャスティングの実装</a></dd>
     <dd id="nProg08"><a href="Program08.html">PBVRの実装</a></dd>
-    <dd id="nAppendix"><a href="Appendix.html">付録：プログラム集（仮）</a></dd>
+    <dd id="nAppendix"><a href="Appendix.html">付録：プログラム集</a></dd>
   </dl>
   <!-- InstanceEndEditable -->
   </div>
@@ -76,8 +75,19 @@
   <p>と記述します．ですので，float型，double型以外の型を使用する場合は</p>
   <code><pre class="prettyprint lang-cpp">kvs::Matrix33&lt;unsigned char&gt; B;</pre></code>
   <p>とすれば行列クラスを使うことができます．</p>
-
 <p>&nbsp;</p>
+	  
+<h4>n×m行列の生成</h4>
+<p>n行m列の行列クラスのオブジェクトを生成するにはでです．</p>
+<p>ヘッダ　#include &lt;kvs/Matrixr&gt;</p>
+<p>をインクルードし，例えばfloat型の5行6列の行列を定義したい場合は</p>
+<code>
+<pre class="prettyprint lang-cpp">
+kvs::Matrix&lt;float&gt; A( 5, 6 );
+</pre></code>
+<p>のようにすればよい．</p>
+ 
+    <p>&nbsp;</p>
 <h3>行列クラスのもつメソッド</h3>
 <p>行列クラスに用意されているメソッドについては実際に，</p>
 <p class="pRed">　(KVSのソースをダウンロードしたディレクトリ) kvs-src/Source/Core/Matrix/Matrix33.h</p>

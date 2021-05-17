@@ -35,7 +35,6 @@
     <dd id="nInstall"><a href="install.html">インストール</a></dd>
     <dd id="nBasis"><a href="basis.html">基本的な使い方</a></dd>
     <dd id="nTransFunc"><a href="transFunc.html">伝達関数を調整する</a></dd>
-    <dd id="nDICOM"><a href="DICOM.html">DICOMデータを読み込む</a></dd>
   </dl>
   <p><strong><br />
   </strong></p>
@@ -56,7 +55,7 @@
     <dd id="nProg06"><a href="Program06.html">可視化パイプライン</a></dd>
     <dd id="nProg07"><a href="Program07.html">レイキャスティングの実装</a></dd>
     <dd id="nProg08"><a href="Program08.html">PBVRの実装</a></dd>
-    <dd id="nAppendix"><a href="Appendix.html">付録：プログラム集（仮）</a></dd>
+    <dd id="nAppendix"><a href="Appendix.html">付録：プログラム集</a></dd>
   </dl>
   <!-- InstanceEndEditable -->
   </div>
@@ -143,6 +142,15 @@ kvs::Vector3&lt;float &gt; a;</pre></code>
 <pre class="prettyprint lang-cpp">
 kvs::Matrix33&lt;unsigned char&gt; b;</pre></code>
 <p>のように記述すれば良い．</p>
+<p>&nbsp;</p>
+<h4>n次元ベクトルの生成</h4>
+<p>KVSでは2，3，4次元の固定長なベクトルクラスの他に一般的なn 次元のベクトルクラスのオブジェクトの生成可能でです．</p>
+<p>ヘッダ　#include &lt;kvs/Vector&gt;</p>
+<p>をインクルードし，例えばfloat型の10次元ベクトルを定義したい場合は</p>
+<code><pre class="prettyprint lang-cpp">
+kvs::Vector&lt;float&gt; a( 10 );
+</pre></code>
+<p>のようにすればよい．</p>
   <p>&nbsp;</p>
 	  
 <!--- ベクトルクラスについて --->
