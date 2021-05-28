@@ -183,11 +183,11 @@ delete volume;
 </pre></code>
   <p>&nbsp;</p>
   <h3>7.　描画</h3>
-  <p>GLUTによる可視化処理を行います．  </p>
+  <p>可視化処理を行います．  </p>
   <p>registerObjectには，kvs::Isosurfaceクラスを使って作成したobject を登録します．</p>
 <code><pre class="prettyprint lang-cpp">
 // Screenクラスの生成と設定
-kvs::glut::Screen screen( &app );
+kvs::Screen screen( &app );
 screen.registerObject( object );
 screen.setGeometry( 0, 0, 512, 512 );
 screen.setTitle( "Isosurface");
@@ -204,15 +204,15 @@ return( app.run() );
   <ul>
     <li>kvs::PolygonObject</li>
     <li>kvs::Isosurface</li>
-    <li>kvs::glut::Screen</li>
-    <li> kvs::glut::Application</li>
+    <li>kvs::Screen</li>
+    <li> kvs::Application</li>
   </ul>
   <p>を追加しました．</p>
 <code><pre class="prettyprint lang-cpp">
 #include &lt;kvs/PolygonObject&gt;
 #include &lt;kvs/Isosurface&gt;
-#include &lt;kvs/glut/Application&gt;
-#include &lt;kvs/glut/Screen&gt;
+#include &lt;kvs/Application&gt;
+#include &lt;kvs/Screen&gt;
 </pre></code>
   <p></p>
   <p>&nbsp;</p>
@@ -263,6 +263,7 @@ screen.registerObject( object2 );
 <!--<p align="right"><a href="Program/Isosurface_Ex.tgz">Isosurface_Ex.tgz</a></p>-->
   <p align="right">Modefied at June 16, 2013</p>
   <p align="right"> at April 27, 2017</p>
+  <p align="right">at May 28, 2021</p>
   
 
   <p>&nbsp;</p>

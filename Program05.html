@@ -168,15 +168,15 @@ object-&gt;updateMinMaxCoords();
   <p></p>
   <p>&nbsp;</p>
   <h3>4.　描画</h3>
-  <p>OpenGLによる可視化のために，GLUTの初期化を行います．</p>
-  <p>KVSでは，GLUTの関数を簡単に使用できるように<span class="pRed">kvs::glut::Application</span>クラスによって定義することができます．</p>
+  <p>OpenGLによる可視化のために，使用しているグラフィックス APIの初期化を行います．</p>
+  <p>KVSでは，簡単に使用できるように<span class="pRed">kvs::Application</span>クラスによって定義することができます．</p>
 <code><pre class="prettyprint lang-cpp">
-kvs::glut::Application app( argc, argv );
+kvs::Application app( argc, argv );
 </pre></code>
   <p>OpenGLでは，ウィンドウの生成やサイズ・背景色の設定を行う関数を呼び，それぞれ設定を行います．</p>
-  <p>KVSではそれらの関数は<span class="pRed">kvs::glut::Screen</span>のメソッドして定義されています．</p>
+  <p>KVSではそれらの関数は<span class="pRed">kvs::Screen</span>のメソッドして定義されています．</p>
   <p>また，キーイベントやマウスイベントについてもKVS内で定義されており，</p>
-  <p>ユーザが設定を行わずともキーやマウスの操作がGLUTウィンドウ上で可能となります．</p>
+  <p>ユーザが設定を行わずともキーやマウスの操作がウィンドウ上で可能となります．</p>
   <p>ここでは</p>
   <ul>
     <li>＊ウィンドウの左上の位置とウィンドウサイズを設定するメソッド<span class="pRed">setGeometry( )</span></li>
@@ -186,10 +186,10 @@ kvs::glut::Application app( argc, argv );
   <p>また，可視化したいオブジェクトは<span class="pRed">registerObject( )</span>を用いてスクリーンクラスに登録します．</p>
   <p>その後，<span class="pRed">show()</span>を呼ぶと適当なRenderer を用いてオブジェクトが描画されます．</p>
   <p>Renderer については次節( <a href="Program06.html">可視化パイプライン</a> )で説明します．</p>
-  <p>最後に，イベント待ち状態にするために，<span class="pRed">kvs::glut::Applicationクラスのメソッドrun()</span>を呼びます．</p>
+  <p>最後に，イベント待ち状態にするために，<span class="pRed">kvs::Applicationクラスのメソッドrun()</span>を呼びます．</p>
 <code><pre class="prettyprint lang-cpp">
 // Screenクラスの生成と設定
-kvs::glut::Screen screen( &app );
+kvs::Screen screen( &app );
 screen.registerObject( object );
 screen.setGeometry( 0, 0, 512, 512 );
 screen.setTitle( "Polygon");
@@ -203,14 +203,14 @@ return( app.run() );
   <p>ここでは，</p>
   <ul>
     <li>kvs::PolygonObject</li>
-    <li>kvs::glut::Screen</li>
-    <li> kvs::glut::Application</li>
+    <li>kvs::Screen</li>
+    <li> kvs::Application</li>
   </ul>
   <p>を使いました．</p>
 <code><pre class="prettyprint lang-cpp">
 #include &lt;kvs/PolygonObject&gt;
-#include &lt;kvs/glut/Application&gt;
-#include &lt;kvs/glut/Screen&gt;
+#include &lt;kvs/Application&gt;
+#include &lt;kvs/Screen&gt;
 </pre></code>
   <p></p>
   <h3>6.　まとめ</h3>
@@ -294,7 +294,8 @@ object-&gt;setColorType( kvs::LineObject::VertexColor );	// 色の種類
   <p>&nbsp;</p>
 <!--  <p align="right"><a href="Program/ViewPolygon_Ex.tgz">ViewPolygon_Ex.tgz</a></p>-->
   <p align="right">Modefied at June 16, 2013  </p>
-  <p align="right">at April 24, 2017  </p>
+  <p align="right">at April 24, 2017</p>
+  <p align="right">at May 28, 2021</p>
   <p>&nbsp;</p>
   <!-- InstanceEndEditable -->
   </div>
