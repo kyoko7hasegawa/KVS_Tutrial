@@ -65,7 +65,7 @@
   <h2>例　行列の演算</h2>
   <p>2次形式：</p>
 <p>　2x<Sup>2</Sup> + 2y<Sup>2</Sup> + 2z<Sup>2</Sup> + 2xy + 2yz + 2zx = 3</p>
-  <p>の標準系を求めよう．</p>
+  <p>の標準形を求めよう．</p>
   <p>&nbsp;</p>
   <h3>1.　作業ディレクトリの作成</h3>
   <p>作業ディレクトリに「QuadricSurface」というディレクトリを作成して，移動して下さい． <br />
@@ -175,7 +175,7 @@ std::cout &lt;&lt; L &lt;&lt; std::endl;
   <p>（ヒント）</p>
 <code><pre class="prettyprint lang-cpp">
 // 固有値分解クラス
-kvs::EigenDecomposer&lt;double&gt; eigen( A );
+kvs::EigenDecomposition&lt;double&gt; eigen( A );
  
 // 固有ベクトルを並べた行列Pを作成
 const kvs::Matrix&lt;double&gt;&amp; P = eigen.eigenVectors() ;
