@@ -22,9 +22,9 @@
 <body onload="PR.prettyPrint()" id="@@(id)@@">
 <div id="wrapper">
   <div id="header">
-    <h1>KVS vsrsion 2.x Tutorial</h1>
+    <h1>KVS Tutorial (version 2〜)</h1>
     <p>&nbsp;</p>
-    <p align="right"> kvs version 2.9</p>
+    <p align="right"> kvs version 3.0</p>
     <p align="right">kvs : <a href=" https://github.com/naohisas/KVS" target="_blank"> https://github.com/naohisas/KVS</a></p>
   </div>
   <!-- end div#header -->
@@ -54,6 +54,16 @@
     <dd id="nProg08"><a href="../Program08.html">PBVRの実装</a></dd>
     <dd id="nAppendix"><a href="../Appendix.html">付録：プログラム集　</a></dd>
   </dl>
+  <p><strong><br />
+  </strong></p>
+  <p><strong> 点群データの可視化 </strong></p>
+  <dl>
+    <dd id="nPoint_ply"><a href="../Point_ply.html">PLY形式（点群データ）</a></dd>
+	<dd id="nPoint_inout"><a href="../Point_inout.html">PLYデータの入出力（バイナリ）</a></dd>
+	<dd id="nPoint_vis"><a href="../Point_vis.html">点群の可視化 </a></dd>
+  </dl>
+
+
   <!-- TemplateEndEditable -->
   </div>
   <!-- end div#sidebar -->

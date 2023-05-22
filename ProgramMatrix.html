@@ -22,9 +22,9 @@
 <body onload="PR.prettyPrint()" id="ProgramMatrix">
 <div id="wrapper">
   <div id="header">
-    <h1>KVS vsrsion 2.x Tutorial</h1>
+    <h1>KVS Tutorial (version 2〜)</h1>
     <p>&nbsp;</p>
-    <p align="right"> kvs version 2.9</p>
+    <p align="right"> kvs version 3.0</p>
     <p align="right">kvs : <a href=" https://github.com/naohisas/KVS" target="_blank"> https://github.com/naohisas/KVS</a></p>
   </div>
   <!-- end div#header -->
@@ -64,7 +64,15 @@
   <h2>行列クラスについて</h2>
   <p>ここでは3次正方行列のもつメソッドについて記載します．</p>
   <p>（2次，4次でも要素数の違いがあるだけでほぼ同じメソッドをもっています）</p>
-  <p>3次正方行列  の省略型としては</p>
+  <p>正方行列を使用する場合は，ベクトルクラスと同様に，使用する次数 N ( N = 2, 3, 4 ) に応じてヘッダをインクルードします．</p>
+    <table border="0" frame="void">
+    <tr>
+		<td width="190"><p class="pRed">行列のクラスのためのヘッダ</p></td>     
+		<td width="190"><p class="pRed">#include &lt;kvs/Matrix<em>NN</em>&gt;</p></td>
+    </tr>
+  </table>
+  <p>&nbsp;</p>
+  <p>変数を宣言する場合は，3次正方行列  の省略型としては</p>
 <p> 　　f ：float型，　　d：double型</p>
   <p>を宣言することができます．</p>
   <p>これはfloat型，double型はKVS内で</p>
@@ -78,7 +86,7 @@
 <p>&nbsp;</p>
 	  
 <h4>n×m行列の生成</h4>
-<p>n行m列の行列クラスのオブジェクトを生成するにはでです．</p>
+<p>n行m列の行列クラスのオブジェクトを生成するには，．</p>
 <p>ヘッダ　#include &lt;kvs/Matrixr&gt;</p>
 <p>をインクルードし，例えばfloat型の5行6列の行列を定義したい場合は</p>
 <code>
@@ -190,7 +198,7 @@ C = kvs::Matrix33f::Identity();  // 単位行列を返す
 C = kvs::Matrix33f::Constant( 3.0 ); // 全要素を3にした行列を返す
 C = kvs::Matrix33f::Diagonal( 1.0 ); // 対角要素が全て 1 の対角行列を返す
 C = kvs::Matrix33f::Random();   // 全要素を乱数で設定した行列を返す
-C = kvs::Matrix33f::RotationX( 90 );  // x軸周りに90度回転する回転行列を返す
+C = kvs::Matrix33f::RotationX( 90.0 );  // x軸周りに90度回転する回転行列を返す
 </pre></code>
 	  <p>&nbsp;</p>
 	  <h4>転置行列：　transpose( ), transposed( )</h4>
@@ -274,11 +282,11 @@ std::cout &lt;&lt; -A &lt;&lt; std::endl;
 </pre></code>
 <p>演算子 * ( *= ) は行列の積，変数と行列の各要素，ベクトルと行列の積の3種類があります．</p>
 <p>変数と行列のかけ算では，複合演算子 *= を用いる場合には変数と行列の順番に注意して下さい．</p>
-<p>ベクトルと行列の積では，行列を演算子の前に書いた場合は行列と行ベクトルのかけ算を実行し，行列を演算子の後ろに書いた場には行ベクトルと行列のかけ算を実行します．どちらの場合も戻り値はベクトル型になります．</p>
+<p>ベクトルと行列の積では，行列を演算子の前に書いた場合は行列と行ベクトルのかけ算を実行し，行列を演算子の後ろに書いた場には列ベクトルと行列のかけ算を実行します．どちらの場合も戻り値はベクトル型になります．</p>
 <code>
 <pre class="prettyprint lang-cpp">
 // 行列同士のかけ算
-C = A*B
+C = A*B;
 A*=B;
  
 // 変数と行列のかけ算

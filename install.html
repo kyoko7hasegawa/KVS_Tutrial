@@ -22,9 +22,9 @@
 <body onload="PR.prettyPrint()" id="install">
 <div id="wrapper">
   <div id="header">
-    <h1>KVS vsrsion 2.x Tutorial</h1>
+    <h1>KVS Tutorial (version 2〜)</h1>
     <p>&nbsp;</p>
-    <p align="right"> kvs version 2.9</p>
+    <p align="right"> kvs version 3.0</p>
     <p align="right">kvs : <a href=" https://github.com/naohisas/KVS" target="_blank"> https://github.com/naohisas/KVS</a></p>
   </div>
   <!-- end div#header -->
@@ -165,25 +165,31 @@ Gitを使ってソースをダウンロードします．ソースファイル�
 <p class="code">$ cd kvs-src</p>
 <p>CUDAやOpenCVなど他のライブラリとし一緒に使用したい場合は，フォルダ内にある『kvs.conf』内で，使用したいライブラリを「１」にする（以下は，標準のkvs.conf）．使用したいライブラリは事前にインストールしておく必要があります．</p>
 <div class="DataFile">
-  <p>KVS_ENABLE_OPENGL = 1 </p>
-  <p>KVS_ENABLE_OSMESA = 0 </p>
-  <p>KVS_ENABLE_GLU = 1 </p>
-  <p>KVS_ENABLE_GLEW = 1 </p>
-  <p>KVS_ENABLE_OPENMP = 0 </p>
-  <p>KVS_ENABLE_DEPRECATED = 0 </p>
-  <p>&nbsp;</p>
-  <p>KVS_SUPPORT_CUDA = 0 </p>
-  <p>KVS_SUPPORT_GLUT = 1 </p>
-  <p>KVS_SUPPORT_OPENCV = 0 </p>
-  <p>KVS_SUPPORT_QT = 0 </p>
+<p>KVS_ENABLE_OPENGL     = 1</p>
+<p>KVS_ENABLE_GLU        = 1</p>
+<p>KVS_ENABLE_GLEW       = 1</p>
+<p>KVS_ENABLE_OPENMP     = 0</p>
+<p>KVS_ENABLE_DEPRECATED = 0</p>
+<p>&nbsp;</p>
+<p>KVS_SUPPORT_CUDA      = 0</p>
+<p>KVS_SUPPORT_GLUT      = 1</p>
+<p>KVS_SUPPORT_GLFW      = 0</p>
+<p>KVS_SUPPORT_OPENCV    = 0</p>
+<p>KVS_SUPPORT_QT        = 0</p>
+<p>KVS_SUPPORT_PYTHON    = 0</p>
+<p>KVS_SUPPORT_MPI       = 0</p>
+<p>KVS_SUPPORT_EGL       = 0</p>
+<p>KVS_SUPPORT_OSMESA    = 0</p>
  </div>
 <p></p>
-<p>オプションが選択できたら『kvs.conf』を保存し，KVSをコンパイルする<br />
-  （ここではkvs.confは変更していません）．</p>
+<p>オプションが選択できたら『kvs.conf』を保存し，KVSをコンパイルする.</p>
 <p class="code">$ make</p>
 <p>エラーなくコンパイルできれば，</p>
 <p class="code">$ make install</p>
 <p>を実行すると，最初に設定した KVS_DIR にインストールされます．</p>
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
 <p>&nbsp;</p>
   <p>&nbsp;</p>
   <p>&nbsp;</p>

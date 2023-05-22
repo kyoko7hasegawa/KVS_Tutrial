@@ -22,9 +22,9 @@
 <body onload="PR.prettyPrint()" id="transFunc">
 <div id="wrapper">
   <div id="header">
-    <h1>KVS vsrsion 2.x Tutorial</h1>
+    <h1>KVS Tutorial (version 2〜)</h1>
     <p>&nbsp;</p>
-    <p align="right"> kvs version 2.9</p>
+    <p align="right"> kvs version 3.0</p>
     <p align="right">kvs : <a href=" https://github.com/naohisas/KVS" target="_blank"> https://github.com/naohisas/KVS</a></p>
   </div>
   <!-- end div#header -->
@@ -103,13 +103,13 @@
     <p>&lt;/KVSML&gt;</p>
   </div>
 <p>これは &quot;DataArray&quot; と書いてあるように，色と透明度が配列で表記されています．</p>
-<p>ここでは，TransferFunction resolution=&quot;256&quot;　と書いてあることから，データ値（上の例ではlobster.fdの密度値）を256階調で表現しますということになります．</p>
+<p>ここでは，TransferFunction resolution=&quot;256&quot;　と書いてあることから，スカラー値（上の例ではlobster.fdの密度値）を256階調で表現しますということになります．</p>
 <p>そのため，カラーマップ：</p>
 <p>　　　　&lt;DataArray type=&quot;uchar&quot;&gt;</p>
 <p>　　　　　254 70 54 254 70 54 254 70 54 25</p>
 <p>は</p>
-<p>データ値 0 のとき， R = 254, G = 70, B = 54</p>
-<p>データ値 1 のとき， R = 254, G = 70, B = 54</p>
+<p>スカラー値 0 のとき， R = 254, G = 70, B = 54</p>
+<p>スカラー値 1 のとき， R = 254, G = 70, B = 54</p>
 <p>…</p>
 <p>のように，３つで1つのデータの色を表しています．</p>
 <p>（全部でresolution × 3　個のデータが並んでいます）</p>
@@ -117,10 +117,10 @@
 <p>　　　　&lt;DataArray type=&quot;float&quot;&gt;</p>
 <p>　　　　　0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</p>
 <p>はカラーマップと同様に</p>
-<p>データ値 0 のとき，透明度 0</p>
-<p>データ値 1 のとき，透明度 1</p>
+<p>スカラー値 0 のとき，不透明度 0</p>
+<p>スカラー値 1 のとき，不透明度 1</p>
 <p>…</p>
-<p>のようにデータ値と透明度の値が1対１の関係になります．</p>
+<p>のようにスカラー値と透明度の値が1対１の関係になります．</p>
 <p>（全部で resolution 個のデータが並んでいます）</p>
 <p>このままでは，編集が大変なので，次のような書き方もできます．</p>
 <p>&nbsp;</p>
@@ -154,8 +154,8 @@
 <p>　　　&lt;ColorMapValue s=&quot;0&quot; r=&quot;255&quot; g=&quot;255&quot; b=&quot;255&quot;/&gt;</p>
 <p> 　　　&lt;ColorMapValue s=&quot;255&quot; r=&quot;255&quot; g=&quot;0&quot; b=&quot;0&quot;/&gt;</p>
 <p>の通り，</p>
-<p>s=&quot;0&quot; r=&quot;255&quot; g=&quot;255&quot; b=&quot;255&quot;　では，データ値が 0 のとき，R = 255, G = 255 , B = 255　(白)</p>
-<p>s=&quot;255&quot; r=&quot;255&quot; g=&quot;0&quot; b=&quot;0&quot;　では，データ値が 255 のとき，R = 255, G = 0 , B = 0　(赤）</p>
+<p>s=&quot;0&quot; r=&quot;255&quot; g=&quot;255&quot; b=&quot;255&quot;　では，スカラー値が 0 のとき，R = 255, G = 255 , B = 255　(白)</p>
+<p>s=&quot;255&quot; r=&quot;255&quot; g=&quot;0&quot; b=&quot;0&quot;　では，スカラー値が 255 のとき，R = 255, G = 0 , B = 0　(赤）</p>
 <p>となり，その間の色は各色について線形補間した値が採用されます．</p>
 <p>オパシティも同様に，設定した場所での値以外は線形補間で表されるので，この例ではオパシティカーブは</p>
 <p> 0 ～ 50 の間は　0，50 ～ 255 の間は 0 -1 を結ぶ直線で補間された値になります．</p>
@@ -181,6 +181,7 @@
   <p align="right">Modefied at June 1, 2015</p>
   <p align="right">at April 12, 2017</p>
   <p align="right">at June 4, 2021</p>
+  <p align="right">at June 14, 2022</p>
     <p>&nbsp;</p>
   <p>&nbsp; </p>
   <!--&nbsp;</p>

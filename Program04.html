@@ -22,9 +22,9 @@
 <body onload="PR.prettyPrint()" id="Prog04">
 <div id="wrapper">
   <div id="header">
-    <h1>KVS vsrsion 2.x Tutorial</h1>
+    <h1>KVS Tutorial (version 2〜)</h1>
     <p>&nbsp;</p>
-    <p align="right"> kvs version 2.9</p>
+    <p align="right"> kvs version 3.0</p>
     <p align="right">kvs : <a href=" https://github.com/naohisas/KVS" target="_blank"> https://github.com/naohisas/KVS</a></p>
   </div>
   <!-- end div#header -->
@@ -252,10 +252,10 @@ if ( !field-&gt;write( &quot;test.fld&quot; ) ) {      // ファイル書き込�
 <p>をフィールド値にもつ構造型ボリュームデータを作成し，KVSMLファイルとして出力しよう．</p>
 <p>ただし，gridNum は標準入力するようにすること．　</p>
 <p>（ヒント）</p>
-<p>Export する際にtemplate 型を &lt;kvs::KVSMLObjectStructuredVolume&gt;で指定します．</p>
+<p>Export する際にtemplate 型を &lt;kvs::kvs::KVSMLStructuredVolumeObject&gt;で指定します．</p>
 <code><pre class="prettyprint lang-cpp">
-kvs::KVSMLObjectStructuredVolume* field =
- new kvs::StructuredVolumeExporter&lt;kvs::KVSMLObjectStructuredVolume&gt;(volume);
+kvs::kvs::KVSMLStructuredVolumeObject* field =
+ new kvs::StructuredVolumeExporter&lt;kvs::KVSMLStructuredVolumeObject&gt;(volume);
 </pre></code>
 <p>また，KVSMLファイル形式の拡張子は「<span class="pRed">.kvsml</span>」です．</p>
 <p>&nbsp;</p>

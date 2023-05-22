@@ -22,9 +22,9 @@
 <body onload="PR.prettyPrint()" id="Prog05">
 <div id="wrapper">
   <div id="header">
-    <h1>KVS vsrsion 2.x Tutorial</h1>
+    <h1>KVS Tutorial (version 2〜)</h1>
     <p>&nbsp;</p>
-    <p align="right"> kvs version 2.9</p>
+    <p align="right"> kvs version 3.0</p>
     <p align="right">kvs : <a href=" https://github.com/naohisas/KVS" target="_blank"> https://github.com/naohisas/KVS</a></p>
   </div>
   <!-- end div#header -->
@@ -48,7 +48,8 @@
     <dd id="nProg04"><a href="Program04.html">構造型ボリュームデータの作成</a></dd>
     <dd id="nProg05"><a href="Program05.html">面データの可視化</a></dd>
         <dt>例　面データの可視化</dt>
-        <dt>問題　ワイヤーフレーム表示</dt>    
+        <dt>問題　ワイヤーフレーム表示</dt>
+        <dt>問題　立方体の描画</dt>    
     <dd id="nProgIso"><a href="ProgramIso.html">等値面の可視化</a></dd>
     <dd id="nProg06"><a href="Program06.html">可視化パイプライン</a></dd>
     <dd id="nProg07"><a href="Program07.html">レイキャスティングの実装</a></dd>
@@ -291,6 +292,62 @@ object-&gt;setColorType( kvs::LineObject::VertexColor );	// 色の種類
 
   <p>&nbsp;</p>
   <p>&nbsp;</p>
+  <h2>問題　立方体を描画してみよう</h2>
+  <p>以下のような頂点8個，面12個の頂点，法線，色情報に変更して，立方体を描画してみよう．</p>
+  <p>&nbsp;</p>
+  <code><pre class="prettyprint lang-cpp">
+    // 頂点座標                                                                                                                                   
+  kvs::Real32 vertex[] = {
+    -1.0, -1.0, -1.0,
+     1.0, -1.0, -1.0,
+    -1.0,  1.0, -1.0,
+     1.0,  1.0, -1.0,
+    -1.0, -1.0,  1.0,
+     1.0, -1.0,  1.0,
+    -1.0,  1.0,  1.0,
+     1.0,  1.0,  1.0
+  };
+  // 頂点色                                                                                                                                     
+  kvs::UInt8 vertCol[] = {
+      0,   0,   0,
+    255,   0,   0,
+    255, 255,   0,
+    255,   0, 255,
+      0, 255,   0,
+      0, 255, 255,
+      0,   0, 255,
+    128, 128, 128
+  };
+  // 頂点法線                                                                                                                                   
+  kvs::Real32 norm[] = {
+    -0.577, -0.577, -0.577,
+     0.577, -0.577, -0.577,
+    -0.577,  0.577, -0.577,
+     0.577,  0.577, -0.577,
+    -0.577, -0.577,  0.577,
+     0.577, -0.577,  0.577,
+    -0.577,  0.577,  0.577,
+     0.577,  0.577,  0.577,
+  };
+  // 接続情報                                                                                                                                   
+  kvs::UInt32 tri[] = {
+    2, 1, 0,
+    1, 2, 3,
+    4, 2, 0,
+    2, 4, 6,
+    1, 4, 0,
+    4, 1, 5,
+    6, 5, 7,
+    5, 6, 4,
+    3, 6, 7,
+    6, 3, 2,
+    5, 3, 7,
+    3, 5, 1
+  };
+  </pre></code>
+  <p>超点数や面の数が上述の例とは異なっているので注意しよう．
+  </p>
+  <p>また，頂点情報や色，面などがどのように対応しているか確認してみよう．</p>
   <p>&nbsp;</p>
 <!--  <p align="right"><a href="Program/ViewPolygon_Ex.tgz">ViewPolygon_Ex.tgz</a></p>-->
   <p align="right">Modefied at June 16, 2013  </p>

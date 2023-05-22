@@ -22,9 +22,9 @@
 <body onload="PR.prettyPrint()" id="basis">
 <div id="wrapper">
   <div id="header">
-    <h1>KVS vsrsion 2.x Tutorial</h1>
+    <h1>KVS Tutorial (version 2〜)</h1>
     <p>&nbsp;</p>
-    <p align="right"> kvs version 2.9</p>
+    <p align="right"> kvs version 3.0</p>
     <p align="right">kvs : <a href=" https://github.com/naohisas/KVS" target="_blank"> https://github.com/naohisas/KVS</a></p>
   </div>
   <!-- end div#header -->
@@ -78,14 +78,16 @@
   kvsmakeコマンドは，”make -f Makefile.kvs”と同意です．</p>
   
   <h2>サンプルプログラムを動かしてみよう</h2>
-  <p>kvsのソースファイルの中にはいろいろなサンプルプログラムが用意されています．<br />
-  ~/local/src/kvs-src/Example/ フォルダ内に多様なサンプルプログラムが入っています．<br />
-  ここでは，水素分子の電荷分布をボリュームデータとして作成するサンプルプログラムを利用して，データの作成と可視化を行ってみましょう．</p>
+  <p>KVSのソースファイルの中にはいろいろなサンプルプログラムが用意されています．<br />
+  ダウンロードしてきたKVSのソース内のExample フォルダ内に多様なサンプルプログラムが入っています．</p>
+  <p>&nbsp;</p>
+  <p>ここでは，水素分子の電荷分布をボリュームデータとして作成するサンプルプログラムを利用して，データの作成と可視化を行ってみましょう．</p>
   <p>まず，自分の作業用ディレクトリ（ここでは，ホームディレクトリの下に「work」というディレクトリを作成します）を作成してサンプルプログラムをコピーします．</p>
+  <p>（ここでは，KVSのソースファイルを「~/local/src/kvs-src」にダウンロードしたとします）</p>
   <p class="code">
-	$ mkdir ~/work　　&lt;-- 作業用ディレクトリの作成<br />
-    $ cd ~/work　　&lt;-- sagyou用ディレクトリに移動<br />
-    $ cp -r ~/local/src/kvs-srcExample/Application/Hydrogen  . 　　&lt;-- サンプルプログラムのコピー
+	$ mkdir ~/work　　&lt;-- 作業用ディレクトリ「work」をホームディレクトリ直下に作成<br />
+    $ cd ~/work　　&lt;-- 作業用ディレクトリ「work」に移動<br />
+    $ cp -r ~/local/src/kvs-src/Example/Application/Hydrogen  . 　　&lt;-- サンプルプログラムのコピー
   </p>
 　<p>コピーしてきた「Hydrogen」ディレクトリ内に移動して下さい．</p>
   <p class="code"> $ cd Hydrogen</p>
@@ -93,7 +95,8 @@
   コンパイルの仕方は上述の「コンパイル」の節に従って，Makefileを作成してコンパイルします．</p>
   <p class="code">
 	$ kvsmake -G 　　&lt;-- Makefileを作成する
-    $ kvsmake 　　&lt;-- プログラムのコンパイル
+    </p>
+  <p class="code">$ kvsmake 　　&lt;-- プログラムのコンパイル
   </p>
   <p>問題なくコンパイルができていれば，『Hydrogen』という名前の実行ファイルができています．<br />
   これを実行すると，ボリュームデータ『hydrogen.kvsml』が作成されます．
