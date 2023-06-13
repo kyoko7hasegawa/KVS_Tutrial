@@ -1,0 +1,292 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>KVS Programming Guide</title>
+<!-- InstanceEndEditable -->
+<link href="base.css" rel="stylesheet" type="text/css" media="screen, tv, projection" />
+<!-- Code 装飾用 Google google-code-prettify -->
+<!--<link rel="stylesheet" type="text/css" href="code-prettify/src/prettify.css">-->
+<!--<link rel="stylesheet" type="text/css" href="../code-prettify/styles/desert.css">-->
+<link rel="stylesheet" type="text/css" href="code-prettify/styles/tomorrow-night-blue.css">
+<script type="text/javascript" src="code-prettify/src/prettify.js"></script>
+<script type="text/javascript" src="code-prettify/src/lang-css.js"></script>
+<!-- ここまで -->
+
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<!-- InstanceParam name="id" type="text" value="Point_vis" -->
+</head>
+
+<body onload="PR.prettyPrint()" id="Point_vis">
+<div id="wrapper">
+  <div id="header">
+    <h1>KVS Tutorial (version 2〜)</h1>
+    <p>&nbsp;</p>
+    <p align="right"> kvs version 3.0</p>
+    <p align="right">kvs : <a href=" https://github.com/naohisas/KVS" target="_blank"> https://github.com/naohisas/KVS</a></p>
+  </div>
+  <!-- end div#header -->
+  
+  <div id="sidebar">
+  <!-- InstanceBeginEditable name="sidebarArea" -->
+  <dl>
+    <dd id="nInstall"><a href="install.html">インストール</a></dd>
+    <dd id="nBasis"><a href="basis.html">基本的な使い方</a></dd>
+    <dd id="nTransFunc"><a href="transFunc.html">伝達関数を調整する</a></dd>
+  <!--  <dd id="nDICOM"><a href="../DICOM.html">DICOMデータを読み込む</a></dd>  -->
+  </dl>
+  <p><strong><br />
+  </strong></p>
+  <p><strong> <a href="Program.html">KVSプログラムの作成</a></strong></p>
+  <dl>
+    <dd id="nProg01"><a href="Program01.html">3次元ベクトルの演算</a></dd>
+    <dd id="nProgMatrix"><a href="ProgramMatrix.html">行列クラス</a></dd>
+    <dd id="nProg02"><a href="Program02.html">行列の演算（行列クラスの応用）</a></dd>
+    <dd id="nProgRandom"><a href="ProgramRandom.html">乱数生成</a></dd>
+    <dd id="nProg03"><a href="Program03.html">オブジェクトについて</a></dd>
+    <dd id="nProg04"><a href="Program04.html">構造型ボリュームデータの作成</a></dd>
+    <dd id="nProg05"><a href="Program05.html">面データの可視化</a></dd>
+    <dd id="nProgIso"><a href="ProgramIso.html">等値面の可視化</a></dd>
+    <dd id="nProg06"><a href="Program06.html">可視化パイプライン</a></dd>
+    <dd id="nProg07"><a href="Program07.html">レイキャスティングの実装</a></dd>
+    <dd id="nProg08"><a href="Program08.html">PBVRの実装</a></dd>
+    <dd id="nAppendix"><a href="Appendix.html">付録：プログラム集　</a></dd>
+  </dl>
+  <p><strong><br />
+  </strong></p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p><strong><a href="Point_data.html">点群データの可視化</a> </strong></p>
+  <dl>
+    <dd id="nPoint_ply"><a href="Point_ply.html">PLYデータ（点群データ）</a></dd>
+	<dd id="nPoint_vis"><a href="Point_vis.html">点群の可視化</a></dd>
+	  <dt>確率的ポイントレンダリング</dt>
+	  <dt><a href="#sec2">例　SPBRの実装</a></dt>
+	  <dt><a href="#sec3">問題　不透明度の変更</a></dt>
+  </dl>
+
+  <!-- InstanceEndEditable -->
+
+  </div>
+  <!-- end div#sidebar -->
+
+  <div id="main">
+  <!-- InstanceBeginEditable name="mainArea" -->
+  <h2>確率的ポイントレンダリング</h2>
+
+  <p>ここでは，点群データの半透明可視化手法である「確率的ポイントレンダリング（Stochastic Point-based Rendering; <span class="pRed">SPBR</span>) 」を用いて点群データの可視化を行っていく．</p>
+  <p>（SPBRの詳細は参考文献：</p>
+  <p>Satoshi Tanaka, Kyoko Hasegawa, Yoshiyuki Shimokubo, Tomonori Kaneko,Takuma Kawamura, Susumu Nakata, Saori Ojima, Naohisa Sakamoto, Hiromi T. Tanaka, and Koji Koyamada,<br />
+    “Particle-Based Transparent Rendering of Implicit Surfaces and its Application to Fused Visualization”,<br />
+    EuroVis 2012, pp.25–29 (short paper), Vienna</p>
+  <p>※SPBRは PBVRをボリュームデータからサーフェスデータへ拡張した手法であり，</p>
+  <ul>
+    <li>＊　点の生成，</li>
+    <li>＊　点の投影，</li>
+    <li>＊　画像のアンサンブル平均（平均回数をリピートレベルとよぶ），</li>
+    <li>＊　半透明画像を生成，</li>
+  </ul>
+  <p>は同様の手順である．</p>
+  <p>&nbsp;</p>
+  <p>SPBRでは曲面上に点が一様に存在すると仮定すると，点密度（点数 <em>n</em> ）と不透明度 <em>&alpha;</em> に以下のような関係式が定義できる（詳細は上述の論文を参考）．</p>
+    <img src="Equation/spbr_alpha.png" height="46" alt="Equation" />
+  <p>ただし．<em>s</em>_p は点の断面積，<em>s</em>_Aは曲面全体の面積，<em>L</em> はリピートレベルを表す．</p>
+  <p>つまり，SPBRでは可視化結果の不透明度は，</p>
+  <p>・点数</p>
+  <p>・リピートレベル</p>
+  <p>に依存する．</p>
+  <p>ただし，一般的に点の可視化（ポイントレンダリング）は1ピクセル相当の点で描画するため，スクリーンの解像度にも不透明度が依存してしまう．</p>
+  <p>&nbsp;</p>
+  <p>ここではスクリーンの解像度（点の断面積 <em>s</em>_p）について，説明する．</p>
+  <p>下の様な球を20×20の解像度のスクリーンに原点を中心とした半径1の球を投影する事を考える．  </p>
+  <p class="image"><img src="img/pixelWidth.png" width="350" alt="pixelWidth" /></p>
+  <p>ここで，点の断面積 <em>s</em>_p とは「スクリーン座標系における1ピクセルを世界座標系に逆変換したときの大きさ」である．</p>
+  <p>上の図の例でいえば，半径1の球を20×20の解像度のスクリーンに投影したときに，1ピクセルを球と同じ座標系に変換したらいくつになるか？を考えれば良い．</p>
+  <p>つまり，球は幅が 2 で，スクリーンは幅 20 ピクセルなので，この例の場合には，</p>
+  <p>1ピクセルの幅 = 2/20 = 0.1 となる．</p>
+  <p>別の例として，スクリーンの解像度が 512 × 512 になれば</p>
+  <p>1ピクセルの幅 = 2/512 = 0.00390625 となり，ピクセルの幅が小さくなることが分かる．</p>
+  <p>つまり，スクリーンの解像度によって <em>s</em>_p の値が変化する．</p>
+  <p>今，簡単のために縦横のサイズが同じ球を例に見ているが，実際は縦横のうち大きい方に合わせる（画面からオブジェクトがはみ出さないように投影する）．</p>
+  <p> <a name="sec2"></a>  </p>
+  <h2>例　SPBRの実装　〜球面上に一様サンプリング〜</h2>
+  <p>実際に，半径1の球に点を生成するプログラムを作って，SPBRで半透明可視化を行うプログラムを作成していこう．</p>
+  <p>ここでは，不透明度とリピートレベル，スクリーンの解像度を入力パラメタとして設定し，球面上にサンプリングする点数を計算する．</p>
+  <p>&nbsp;</p> 
+  <h3>1.　作業ディレクトリの作成</h3>
+  <p>作業ディレクトリに「spbr」というディレクトリを作成して，移動して下さい． <br />
+  </p>
+  <p class="code">$ mkdir  SPBR </p>
+  <p class="code">$ cd SPBR </p>
+  <p>&nbsp;</p>
+  <h3>2.　main.ccp の作成</h3>
+  <p>「main.cpp」というファイルを作成して下さい．</p>
+  <p>このプログラム例では，不透明度を 0.2, リピートレベルを 50, スクリーンの解像度を 512 とし，また球の半径は 1.0 で作成した点の色をシアン ( 0, 255, 255 ) と固定することとする．これらを固定パラメタとして，最初に書いておくこととする．</p>
+  <code>
+  <pre class="prettyprint lang-cpp">
+int main( int argc, char** argv )
+{
+  const double ALPHA = 0.2;      // 不透明度
+  const int REPEAT_LEVEL = 50;   // リピートレベル
+  const int IMAGE_RESOLUTION = 512;  // スクリーンの解像度
+
+  const unsigned char  POINT_COLOR[3] = { 0, 255, 255 }; // 点の色（シアン）
+  const double RAD = 1.0;    // 球の半径 
+  //---- ここから下にプログラムを追記していく
+
+  } </pre></code>
+  <h3>3.　生成点数の計算</h3>
+  <p>設定したパラメタから，球面上に生成するのに必要な点数を計算する，ここでは，簡単のため球がスクリーンいっぱいに投影すると仮定して点の断面積を求める．</p>
+  <p>（ただし，KVSではオブジェクトがはみ出さないようにマージンが設定されており，正確には</p>
+  <p>　　 <strong>kvs::detail::CalculateSubpixelLength( )</strong> 関数を通して点の断面積を取得する方が理想的である）</p>
+  <p>また，点数の計算は double型で行った後に，整数型にキャストする．</p>
+  <code><pre class="prettyprint lang-cpp">
+  double diameter = 2.0 * RAD;    // 球の直径
+  // ピクセルの幅を球の幅とスクリーンの解像度から概算
+  double pixel_width = diameter / (double)IMAGE_RESOLUTION;  
+
+  double pixel_area = pixel_width * pixel_width;    // 点の断面積
+  double area = 4.0 * M_PI * RAD * RAD;                 // 球の表面積
+
+  // 定義式から球面上に必要な点の数を計算する
+  double nall =
+   ( log(1.0 - ALPHA) / log(1.0 - pixel_area/area) * (double)REPEAT_LEVEL );
+  size_t numVert = (size_t)nall;   // 整数型にキャスト</pre></code>
+	  
+  <h3>4.　球面上に一様な点をサンプリングする</h3>
+  <p>numVert 個の点を球面状にサンプリングすることを考えよう．</p>
+  <p>簡単には，球を極座標で考え，</p>
+  <p><img src="Equation/sphere-0.png" height="72" alt="Equation" /></p>
+  <p><em>θ</em>と<em>φ</em>を乱数で生成して点を生成する方法が考えられる．但し．この場合には，<em>z</em> の値が±1 の付近（地球でいう北極・南極の辺り）で点密度が高くなってしまい，SPBRでの曲面上で一様であるという仮定に従わない．</p>
+  <p>そこで，z の値が [-1, 1] で一様になるように考える，<img src="Equation/cos_theta.png" height="10" alt="Equation" /> より，
+	  <img src="Equation/sin_theta.png" height="16" alt="Equation" />を代入して新たに [0, 1]で一様な乱数を s, t とすれば，上の式は，</p>
+  <p><img src="Equation/sphere-1.png" height="72" alt="Equation" /></p>
+  <p>で書き表すことができる．</p>
+  <p>※球の半径を変更したい場合は，x, y, zそれぞれに半径 r をかければよい．</p>
+  <p>ここで，s, t は<a href="ProgramRandom.html">乱数の生成</a>で用いた一様乱数 <strong>kvs::MersenneTwister</strong> を用いる． </p>
+  <p>また，球面上の法線は球を <img src="Equation/sphere_func.png" height="14" alt="Equation" />とすれば，法線は
+    <img src="Equation/sphere_normal.png" height="12" alt="Equation" />（法線ベクトルは正規化する）で求めることができる，</p>
+  <code><pre class="prettyprint lang-cpp">
+  std::vector &lt;kvs::Real32&gt; coords;    // 全点の位置情報を格納
+  std::vector &lt;kvs::Real32&gt; normals;   // 全点の法線情報を格納
+  std::vector &lt;kvs::UInt8&gt;  colors;    // 全点の色情報を格納
+
+  kvs::MersenneTwister uniRand;   // 一様乱数 s, t 
+  for( size_t i = 0; i &lt; numVert; i++ ) {  // numVert 個の点をランダムに生成する
+    //--- 球面上に一様な点を生成する 
+    double z = RAD * ( -2.0 * uniRand() + 1.0); // ここでのuniRand() は上式の s
+    double sinTheta = sqrt( 1.0 - z * z );
+    double phi = 2.0 * M_PI * uniRand();     // ここでのuniRand() は上式の t
+    double x = RAD * sinTheta * cos( phi );
+    double y = RAD * sinTheta * sin( phi );
+    // ランダムに生成した位置座標を格納
+    coords.push_back( (float)x );
+    coords.push_back( (float)y );
+    coords.push_back( (float)z );
+    // 法線を計算して，登録する
+    kvs::Vector3f norm( (float)x, (float)y, (float)z );
+    norm.normalize( );   // 正規化を行う
+    normals.push_back( norm.x() );
+    normals.push_back( norm.y() );
+    normals.push_back( norm.z() );
+    // 色を登録する（ここでは全ての点は同じ色とする）
+    colors.push_back( POINT_COLOR[0] );
+    colors.push_back( POINT_COLOR[1] );
+    colors.push_back( POINT_COLOR[2] );
+  }  </pre></code>
+  <h3>5.　PointObjectの生成</h3>
+  <p>生成した点の情報から，kvs::PointObject のインスタンスを作成する． </p>
+  <code><pre class="prettyprint lang-cpp">
+  kvs::PointObject *point = new kvs::PointObject();
+  point-&gt;setCoords( kvs::ValueArray&lt;kvs::Real32&gt;( coords ));    // 位置情報
+  point-&gt;setNormals( kvs::ValueArray&lt;kvs::Real32&gt;(normals ) );  // 法線情報
+  point-&gt;setColors( kvs::ValueArray&lt;kvs::UInt8&gt;( colors ) );    // 色情報
+  point-&gt;updateMinMaxCoords();     // 登録した点群の位置情報の最大値・最小値を求める
+  point-&gt;print( std::cout );       // 生成したPointObjectの情報を標準出力  </pre>
+  </code>
+  <h3> 6.　Renderer の生成　</h3>
+  <p>SPBRではPBVRと同様に<span class="pRed">kvs::glsl::ParticleBasedRenderer</span> を使い，リピートレベルを設定する．</p>
+<p>また，SPBRでは不透明度が1ピクセルの大きさによることから，ここでは，KVSの標準機能である粒子拡大（点がカメラからの距離に応じて拡大されて提示される）を無効にする．</p>
+<code><pre class="prettyprint lang-cpp">
+  kvs::glsl::ParticleBasedRenderer* renderer =
+    new kvs::glsl::ParticleBasedRenderer();
+  renderer->setRepetitionLevel ( REPEAT_LEVEL );   // リピートレベルの設定
+  renderer->disableZooming();    // 粒子拡大を無効化 </pre></code>
+  <h3>7．描画</h3>
+  <p>描画についてはこれまでと同様に，<span class="pRed">kvs::Application</span> と<span class="pRed"> kvs::Screen</span> を使う．</p>
+  <p>Screenの解像度が変わってしまうと，描画結果として不透明度が変わってしまうため，点数の計算に使った解像度を設定する．また，半透明描画を行うため，背景色を黒にすることで，可視化結果への背景色の影響を無視することにする．</p>
+  <p>最後に，ScreenにPointObjectとParticleBasedRendererを登録して描画する．</p>
+  <code>
+  <pre class="prettyprint lang-cpp">
+  kvs::glut::Application app( argc, argv );
+  kvs::glut::Screen screen( &amp;app );
+  //  Screeの解像度を設定
+  screen.setGeometry( 0, 0, IMAGE_RESOLUTION, IMAGE_RESOLUTION ); 
+  //  背景色を黒に設定
+  screen.setBackgroundColor( kvs::RGBColor ( 0, 0, 0 ) );
+  screen.setTitle( "SPBR" );
+  screen.registerObject( point, renderer );
+  screen.show();
+
+  return( app.run() );</pre></code>
+  <h3>8.　ヘッダファイル</h3>
+  <p>使用したKVSクラスをインクルードします．ここでは，</p>
+  <ul>
+    <li> kvs::MersenneTwister</li>
+    <li>kvs::PointObject</li>
+    <li>kvs::glsl::ParticleBasedRenderer</li>
+    <li>kvs::glut::Application</li>
+    <li>kvs::glut::Screen</li>
+  </ul>
+  <p>を使用したので以下をインクルードする．</p>
+  <code><pre class="prettyprint lang-cpp">
+#include &lt;kvs/MersenneTwister&gt;
+#include &lt;kvs/PointObject&gt;
+#include &lt;kvs/ParticleBasedRenderer&gt;
+#include &lt;kvs/glut/Application&gt;
+#include &lt;kvs/glut/Screen&gt;</pre></code>
+  <h3>9.　まとめ</h3>
+  <p>以上をまとめたプログラムはこちら：　<a href="Program/SPBR.zip">SPBR.zip</a></p> 
+  <p>&nbsp;</p>
+  <h3>10.　コンパイルと実行</h3>
+  <p>作成したプログラムをコンパイル，実行しよう．</p>
+  <p>KVSプログラムをコンパイルするためにはkvsmakeコマンドを用いてMakefileを作成した後に．コンパイルを行う．</p>
+  <p class="code">$ kvsmake -G　　　　　　　　　　&lt;-- Makefile の作成</p>
+  <p class="code">$ kvsmake　　　　　　　　　　　　&lt;-- コンパイル</p>
+  <p>エラーなくコンパイルできたら，実行してみよう．</p>
+<p class="code">$ ./SPBR　  </p>
+<p>以上を実行すると，半透明なシアン色の球が描画できる．</p>
+  <p class="image"><img src="img/SPBR.png" width="400" alt="SPBR" /></p>
+
+  <p> <a name="sec3"></a>  </p>
+  <h2> 問題　不透明度を変更してみよう</h2>
+  <p>上の例では不透明度を 0.2 で固定していたので，標準入力から不透明度を入力できるようにプログラムを変更し，点数がどのように変わるか調査せよ．</p>
+  <p>また，不透明度は 0 より大きく，1より小さい値 ( 0 &lt; <em>α</em> &lt; 1 ) になるようにエラー処理を行うこと，</p>
+  <p>※あまり1に近い値を入力すると点数が膨大になるため， 0.99 程度で止めておくのが現実的である．</p>
+  <p>&nbsp;</p>
+  <h2> 応用　PLYデータをSPBRで可視化してみよう</h2>
+	 
+  <p>前のページのPLYデータの読み込みとこのページのSPBRレンダラの設定の部分を合わせて，PLYデータを読み込んで半透明可視化を行うプログラムを完成させよ．</p>
+  <p>また，PLYデータ（計測データ）はこのページのように曲面上に点を生成することが困難である．</p>
+  <p>計測データの半透明可視化をどのように実現しているか調査せよ．</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+	
+	  
+	 <p align="right">Modefied at April 10, 2023</p>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#main -->
+
+  <div id="fotter">
+    <p><a href="index.html">TOP</a>　</p>
+  </div>
+  <!-- end div#fotter -->
+    
+</div>
+<!-- end div#wrapper -->
+
+</body>
+<!-- InstanceEnd --></html>

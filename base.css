@@ -121,7 +121,9 @@ a:active {
 #Appendix #sidebar #nAppendix a,
 #ProgIso #sidebar #nProgIso a,
 #ProgramMatrix #sidebar #nProgMatrix a,
-#ProgramRandom #sidebar #nProgRandom a
+#ProgramRandom #sidebar #nProgRandom a,
+#Point_ply #sidebar #nPoint_ply a,
+#Point_vis #sidebar #nPoint_vis a
 {
 	color: #b9dddd;
 	background-color: #007373;
@@ -176,11 +178,10 @@ a:active {
 	text-decoration: underline;
 }
 
-
-
 #main .code {
 	color: #FFFFFF;
 	background-color: #000;
+	font-family: Monaco, 'Courier New';
 	/*text-indent: 2em;*/
 	padding-left:10px;
 	margin-right: 20px;
@@ -218,6 +219,44 @@ a:active {
 }
 #main .think {
 	color:#F90;
+}
+
+#main dl {
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: flex;
+	flex-wrap: wrap;
+	align-items: stretch;	
+	width: 590px;
+	border: 1px solid #ccc;
+	border-bottom: none;
+}
+#main dl  dt{
+	background: #f5f5f5;
+	padding: 5px;
+	width: 400px;
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}
+#main dl dd{
+	background: #fff;
+	padding: 5px;
+	width: 585px;
+/*	width: calc(100% - 150px); */
+	border-bottom: 1px solid #ccc;
+}
+
+#main li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9 {
+	list-style-type: decimal !important;
+	color: #555;
+	list-style-position: outside;
+	margin-left: 36px;
+	padding-left: 16px;
+}
+
+#main em {
+font-family: 'Hiragino Kaku Gothic ProN';
+font-style: italic;
 }
 
 #Appendix #main dl {

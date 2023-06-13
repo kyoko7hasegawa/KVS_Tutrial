@@ -1,0 +1,429 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>KVS Programming Guide</title>
+<!-- InstanceEndEditable -->
+<link href="base.css" rel="stylesheet" type="text/css" media="screen, tv, projection" />
+<!-- Code 装飾用 Google google-code-prettify -->
+<!--<link rel="stylesheet" type="text/css" href="code-prettify/src/prettify.css">-->
+<!--<link rel="stylesheet" type="text/css" href="../code-prettify/styles/desert.css">-->
+<link rel="stylesheet" type="text/css" href="code-prettify/styles/tomorrow-night-blue.css">
+<script type="text/javascript" src="code-prettify/src/prettify.js"></script>
+<script type="text/javascript" src="code-prettify/src/lang-css.js"></script>
+<!-- ここまで -->
+
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<!-- InstanceParam name="id" type="text" value="Point_ply" -->
+</head>
+
+<body onload="PR.prettyPrint()" id="Point_ply">
+<div id="wrapper">
+  <div id="header">
+    <h1>KVS Tutorial (version 2〜)</h1>
+    <p>&nbsp;</p>
+    <p align="right"> kvs version 3.0</p>
+    <p align="right">kvs : <a href=" https://github.com/naohisas/KVS" target="_blank"> https://github.com/naohisas/KVS</a></p>
+  </div>
+  <!-- end div#header -->
+  
+  <div id="sidebar">
+  <!-- InstanceBeginEditable name="sidebarArea" -->
+  <dl>
+    <dd id="nInstall"><a href="install.html">インストール</a></dd>
+    <dd id="nBasis"><a href="basis.html">基本的な使い方</a></dd>
+    <dd id="nTransFunc"><a href="transFunc.html">伝達関数を調整する</a></dd>
+  <!--  <dd id="nDICOM"><a href="../DICOM.html">DICOMデータを読み込む</a></dd>  -->
+  </dl>
+  <p><strong><br />
+  </strong></p>
+  <p><strong> <a href="Program.html">KVSプログラムの作成</a></strong></p>
+  <dl>
+    <dd id="nProg01"><a href="Program01.html">3次元ベクトルの演算</a></dd>
+    <dd id="nProgMatrix"><a href="ProgramMatrix.html">行列クラス</a></dd>
+    <dd id="nProg02"><a href="Program02.html">行列の演算（行列クラスの応用）</a></dd>
+    <dd id="nProgRandom"><a href="ProgramRandom.html">乱数生成</a></dd>
+    <dd id="nProg03"><a href="Program03.html">オブジェクトについて</a></dd>
+    <dd id="nProg04"><a href="Program04.html">構造型ボリュームデータの作成</a></dd>
+    <dd id="nProg05"><a href="Program05.html">面データの可視化</a></dd>
+    <dd id="nProgIso"><a href="ProgramIso.html">等値面の可視化</a></dd>
+    <dd id="nProg06"><a href="Program06.html">可視化パイプライン</a></dd>
+    <dd id="nProg07"><a href="Program07.html">レイキャスティングの実装</a></dd>
+    <dd id="nProg08"><a href="Program08.html">PBVRの実装</a></dd>
+    <dd id="nAppendix"><a href="Appendix.html">付録：プログラム集　</a></dd>
+  </dl>
+  <p><strong><br />
+  </strong></p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p><strong><a href="Point_data.html">点群データの可視化</a> </strong></p>
+  <dl>
+    <dd id="nPoint_ply"><a href="Point_ply.html">PLYデータ（点群データ）</a></dd>
+	  <dt>PLYデータフォーマット</dt>
+	  <dt><a href="#sec2">例　PLYの読み込みと描画</a></dt>
+	  <dt><a href="#sec3">問題　読み込み部の変更</a></dt>
+	<dd id="nPoint_vis"><a href="Point_vis.html">点群の可視化</a></dd>
+  </dl>
+
+  <!-- InstanceEndEditable -->
+
+  </div>
+  <!-- end div#sidebar -->
+
+  <div id="main">
+  <!-- InstanceBeginEditable name="mainArea" -->
+  <h2>PLY データフォーマット</h2>
+
+  <p><a href="Point_data.html">前のページ</a>でも紹介したように，点群データを保存するためのファイルフォーマットは色々存在する．</p>
+  <p>もちろん，KVSの独自フォーマットであるkvsml でも点群データの記述に対応している，</p>
+  <p>&nbsp;</p>
+  <p>本Webページでは，CG系で扱われることが多いPLY 形式について述べる．</p>
+  <p><a href="Data/tetrahedron.ply" target="_blank">tetrahedron.ply </a>のファイルの中身を見てみよう．</p>
+  <p>このデータは<a href="Program05.html">面データの可視化</a>で描画した四面体をPLYフォーマット（アスキー形式）で出力したものである．</p>
+  <code>
+  <pre class="prettyprint linenums">
+ply
+format ascii 1.0
+element vertex 4
+property float x
+property float y
+property float z
+property float nx
+property float ny
+property float nz
+property uchar red
+property uchar green
+property uchar blue
+element face 4
+property list uchar int vertex_indices
+end_header
+1 1 1 0.5773503 0.5773503 0.5773503 0 0 0 
+-1 1 -1 -0.5773503 0.5773503 -0.5773503 255 0 0
+-1 -1 1 -0.5773503 -0.5773503 0.5773503 0 255 0
+1 -1 -1 0.5773503 -0.5773503 -0.5773503 0 0 255
+3 0 1 2
+3 0 2 3
+3 0 3 1 
+3 3 2 1 </pre></code>
+  <p>それでは，上のファイルを例にply の基本的なデータフォーマットを確認しよう．</p>
+  <p>PLYファイルでは，基本的に1〜15行目のヘッダ部とそれ以降のデータ部に分かれる．</p>
+  <p>ヘッダ部は</p>
+  <p><strong><u>1行目</u></strong>に必ず</p>
+<div class="DataFile">ply</div>
+  <p>と記述する必要があり，</p>
+  <div class="DataFile">end_header</div>
+  <p>でヘッダの終了を示す必要がある．<br />
+    </p>
+  <p>ヘッダ部を詳しく見ていこう．</p>
+  <strong><u>2行目</u></strong>は データ部がどのような記述形式（フォーマット）で記載されているかを示す．ここでは，
+    <div class="DataFile">format ascii 1.0 </div>
+    <p>となっており，データの記述形式が ASCII （テキスト）で書かれていることを示す．最後の数値はバージョンを表し，現在の所 1.0 のみが使われている．</p>
+  <p>データがバイナリで書かれている場合は，バイナリデータの記録方式に従って：</p>
+    <div class="DataFile">format binary_little_endian 1.0<br />
+      format binary_big_endian 1.0</div>
+  <p>のいずれかが記述される．</p>
+  <p>バイナリデータがリトルエンディアン（Intel社のｘ86系環境などで使用される）で記録される場合には，上側の書き方になる．</p>
+  <p><strong><u>3行目</u></strong>にもある <span class="pRed">element</span> 行は「何」が「いくつ」あるのかが記載される．</p>
+    <div class="DataFile">element vertex 4</div>
+  <p>ここでは vertex (頂点）が4つあることを示している．続いてその直下の行からその「何」かがどのような要素をもつのかが <span class="pRed">property </span>行として記述される．ここでは<u><strong>4〜12行目</strong></u>が頂点の要素になる．</p>
+  <p>つまり，1点あたりがも情報を詳述している．ここでた，1点あたり，6つの情報をもっていることになる．  </p>
+  <p>4〜12行目を見てどのような情報をもっているのかみてみよう．</p>
+    <div class="DataFile">property float x<br />
+      property float y<br />
+      property float z<br />
+      property float nx<br />
+      property float ny<br />
+      property float nz<br />
+      property uchar red<br />
+      property uchar green<br />
+      property uchar blue</div>
+  <p>property の次に書かれているのはデータの型と項目である，</p>
+  <p>4, 5, 6 行目ではfloat型で ( x, y, z ) の位置情報，</p>
+  <p>7, 8, 9 行目ではfloat型 で ( nx, ny, nz ）の法線情報，</p>
+  <p>10, 11, 12 行目では uchar ( unsigned char ) 型 で ( r, g, b ) の色情報，</p>
+  <p>を持っていることを示し，またデータ部にはその順番でデータが書かれている．</p>
+  <p><strong><u>13行目</u></strong>は 3行目と同様の element  行で，ここでは face （面）が4つあると示している． </p>
+    <div class="DataFile">element face 4</div>
+  <p>面情報の詳細にある<u><strong>14行目</strong></u>の property 行：</p>
+    <div class="DataFile">property list uchar int vertex_indices  </div>
+  <p>は，まずデータの型ではなく” list ”と書かれており，データとして値のリストがかかれていることを示す．</p>
+  <p>次に書かれているデータの型（ここでは uchar ）は項目数の型で，その次の型（ここでは int 型）は項目を記載する型になる．最後の” vertex_indices ”は頂点のインデックスが項目として記載してある事を意味する．</p>
+  <p>つまり，面情報は，</p>
+  <p>頂点数　頂点番号1　頂点番号2　・・・　頂点番号N</p>
+  <p>のように並んで（リストととして）書かれており，頂点数が char型，頂点番号がint 型でかかれているということを表している．</p>
+  <p>ヘッダ部の最後は，<u><strong>15行目</strong></u>にかいてあるように，</p>
+    <div class="DataFile">end_header</div>
+  <p>が書かれ，ここまでがヘッダ部になり，次の行からはヘッダ部に書いてあった順でデータが並んでいる，</p>
+  <p>また，ヘッダ部にはコメントを書くことができ，<span class="pRed">comment</span> で行が始まる．</p>
+  <p>&nbsp;</p>
+  <p>データ部を見てみよう．</p>
+<p>ヘッダ部にも書かれていたとおり，この ply データには4つの頂点（位置情報，法線情報，色情報をもつ）と4つの面（ポリゴン）をもっている．</p>
+  <p><strong><u>16〜19行目</u></strong>の4行が頂点情報であり，ASCII形式で書かれている場合は，1行につき1点の情報が property で示した順に書かれている．</p>
+  <p>ここでは1行毎に</p>
+  <p>x y z nx ny nz red green blue</p>
+  <p>が書かれている．つまり，16行目をみれば第 0 頂点は</p>
+  <p>    位置情報 ( x, y, z ) = (1, 1, 1)</p>
+  <p>法線情報 (nx, ny, nz ) = ( 0.5773503, 0.5773503, 0.5773503 )</p>
+  <p>色情報 ( R, G, B ) = ( 0, 0, 0 )</p>
+  <p>という情報を持つことになる．</p>
+  <p>ここで，plyデータでは頂点のインデックス番号は 0 番から始まる．</p>
+    <div class="DataFile">1 1 1 0.5773503 0.5773503 0.5773503 0 0 0　　　&lt;-- 第　0　頂点<br />
+      -1 1 -1 -0.5773503 0.5773503 -0.5773503 255 0 0　&lt;-- 第　1　頂点<br />
+      -1 -1 1 -0.5773503 -0.5773503 0.5773503 0 255 0　&lt;-- 第　2　頂点<br />
+      1 -1 -1 0.5773503 -0.5773503 -0.5773503 0 0 255　&lt;-- 第　3　頂点</div>
+  <p>頂点のインデックス番号が上のように付いているものとして，面情報のリストは作成される.</p>
+  <p>次に面情報をみてみよう．</p>
+  <p><strong><u>20〜23行目</u></strong>に1行毎に1つの面情報（頂点数と頂点のリスト）が書いてる．20行目をみてみると</p>
+  <p>0 番目の面は</p>
+  <p>頂点数が3つ　</p>
+  <p>あり，その面の頂点番号は</p>
+  <p>0，1，2</p>
+  <p>である．</p>
+  <p>つまり，三角形のポリゴンで第0頂点と第1頂点と第2頂点を順に結んだ面である事を示している．</p>
+    <div class="DataFile">3 0 1 2 　&lt;-- 0番目の面<br />
+      3 0 2 3  　&lt;-- 1番目の面<br />
+      3 0 3 1  　&lt;-- 2番目の面<br />
+      3 3 2 1  　&lt;-- 3番目の面</div>
+  <p>以上がPLYフォーマットの基本的な記述である．他にもpropertyとして不透明度やレーザ強度を記載したり，データの型を double 型で書いたりと，色々なカスタマイズが可能である．ヘッダ部にはASCIIで記載され，それに従ってデータ部が格納されるので，ヘッダ部をみればどのようなデータなのか明確である点が研究用として広く利用されている1つの要因でもある．</p>
+  <p>&nbsp;</p>
+  <p>点群データを記載する場合は，基本的には上述の記載と変わらず，面の情報が記述されていない（または face が 0 になっている）だけである．</p>
+  <p>&nbsp;</p>
+  <a name="sec2"></a>
+  <h2>例　PLYデータの読み込みと描画  </h2>
+  <p>周知のように，テキストで記述されたデータよりもバイナリで記述されている方が読み込み／書き込みともに早いので，ここではバイナリ形式（リトルエンディアン）を扱っていく．</p>
+  <p>（バイナリ形式でデータが記載されている場合は，1行に1点ではく，連続して（改行無しに）1点毎のデータが羅列される）</p>
+  <p>&nbsp;</p>
+  <p>KVSにはそれぞれ点群を読み込むための kvs::PointImporter があるが，これはPLY形式には対応しておらず，kvsml データのみである．またPLYデータの読み込みとしてはポリゴンデータのImporterである kvs::PolygonImporter は対応しているので， </p>
+	  <code>
+    <pre class="prettyprint lang-cpp">
+ kvs::PolygonObject* object = new kvs::PolygonImporter( &quot;PLY_file.ply&quot; );
+</pre></code>
+  <p>のようにしてPolygonObjectとして読み込んだ後にPointObjectにキャストすることも可能である．</p>
+  <p>&nbsp;</p>
+  <p>但し．ここでは，PLYデータを読み込んで，PointObjectのインスタンスを作成するプログラムを作ることにしよう．</p>
+  <p>&nbsp;</p>
+  <p>こちらの点群データ<a href="Data/sphere.ply" target="_blank">sphere.ply</a>を読み込んで可視化していこう．</p>
+  <p>ヘッダ部を確認すると，（データ部はバイナリ形式で書かれているので適当なテキストエディタで開いても文字化けして読めないものになっている）このデータは頂点が5000個で位置情報，法線情報，色情報をもっており，位置情報と法線情報がfloat型，色情報がucha (unsigned char) 型であることがわかる，</p>
+  <code>
+  <pre class="prettyprint linenums">
+ply
+format binary_little_endian 1.0
+element vertex 5000
+property float x
+property float y
+property float z
+property float nx
+property float ny
+property float nz
+property uchar red
+property uchar green
+property uchar blue
+end_header </pre></code>
+  <p>このデータファイルを読み込んで可視化するプログラムを作っていこう．</p>
+  <p>&nbsp;</p>
+  <h3>1.　作業ディレクトリの作成</h3>
+  <p>作業ディレクトリに「plyImport」というディレクトリを作成して，移動して下さい.</p>
+  <p class="code">$ mkdir   plyImport</p>
+  <p class="code">$ cd plyImport </p>
+  <p>&nbsp;</p>
+ <h3>2.　main.ccp の作成 とファイル読み込み</h3>
+  <p>「main.cpp」というファイルを作成して下さい．</p>
+  <p>プログラム実行の際にコマンドライン引数としてファイルを読み込むようにするため，引数のチェックをします． </p>
+  <p>ファイルの読み込みは，コマンドライン引数の第1引数をデータファイルとして読み込む．</p>
+  <code><pre class="prettyprint lang-cpp">
+int main( int argc, char** argv )
+{
+   if( !(argc == 2 ) ) {
+　    std::cerr &lt;&lt; &quot;USAGE (1): ./plyImport ply_data&quot; &lt;&lt; std::endl;
+      exit(1) ;
+   }
+   //---- ファイルオープン
+   std::ifstream fin( argv[1] );
+   if (!fin) {
+     std::cout << "Cannnot Open file." << std::endl;
+     exit(1) ;
+   }
+//---- ここから下にプログラムを追記していく
+
+}
+</pre></code>
+  <p></p>
+  <p>&nbsp;</p>
+ <h3>3.　ヘッダ部の読み込み</h3>
+	  <p>ここでは，読み込んだPLYファイルのpropertyのチェックまではせず，</p>
+	  <p>x y z nx ny nz r g b</p>
+	  <p>の9要素がこの順番で，かつ x, y, z, nx, ny, nz はfloat型，r, g, b は unsigned char 型で書かれていることとする．</p>
+    <p>ここでは，ヘッダ部は1行ずつ読み込み，スペースまたはタブで区切られたトークンに分割して処理を行う．</p>
+	  <p>念のため，まず．1行目が</p>
+	  <p>ply</p>
+	  <p>となっているかチェックしておくこととする．</p>
+	  <code>
+	  <pre class="prettyprint lang-cpp">
+//--- getline で1行読み込
+  const int BUF_SIZE = 512;
+  char buf[BUF_SIZE]; // 1行の文字列を格納する
+  //--- 1行目が ply と書かれているかチェック
+  fin.getline( buf, BUF_SIZE, '\n' );
+  if( strncmp( buf, "ply", 3 ) ) {
+    std::cout << "This file is NOT ply-format." << std::endl;
+    exit(1);
+  }</pre></code>
+	  <p>次に，ヘッダ部に記載されている頂点数を変数（ここではnumVert）に格納する．頂点数は</p>
+    <div class="DataFile">element vertex 5000</div>
+	  <p>elementから始まる行の vertex 項目に頂点数が書かれている．</p>
+	  <p>ここでは 1行をトークンに分割して，0番目のトークンが elementで1番目のトークンがvertexだった場合に2番目のトークンを頂点数として文字列から整数に変換してnumVertに格納する．</p>
+	  <p>最後に，ヘッダ部の最後である「end_header」が格納されたら，ヘッダの読み込みを終了する．</p>
+	  <p>※このプログラムではproperty 行はスキップしている</p>
+	  <code><pre class="prettyprint lang-cpp">
+  size_t numVert;       //--- 頂点数
+  // トークンを保存するための配列
+  char words[ 20 ][BUF_SIZE];  
+  char *w;
+  size_t numToken;
+  
+  while( fin.getline( buf, BUF_SIZE, '\n' ) ) {
+    numToken = 0;
+    w = buf;
+    while( (w=strtok(w, " \t") ) !=NULL ) {　　    // トークンに分割する
+      strcpy( words[numToken], w );
+      numToken++;
+      w = NULL;
+    }
+    //---　頂点数を格納する
+    if( !strncmp( words[0], "element", 7 ) &&
+        !strncmp( words[1], "vertex", 6 ) )  {
+      errno = 0;
+      char *endp;
+      numVert = std::strtol( words[2], &endp, 10); // 文字列から数値に変換
+      if (errno != 0 ) {   // 正しく数値に変換できたかチェックする
+        std::cout << words[2] << std::endl;
+        std::cerr << "strtol error: over flow" << std::endl;;
+        exit(1);
+      }
+      std::cout << "Number of vertices: " << numVert << std::endl;
+    }
+	//--- ヘッダ部の終わりがきたらwhile文の繰り返しをぬける
+    if( !strncmp( words[0], "end_header", 10 ) ) break;
+  } </pre></code>
+	  <h3>4. データ部の読み込み</h3>
+	  <p>バイナリ型で書かれている場合，</p>
+	  <p>float型（ 4バイト )のデータ3つがx,	y, z に，</p>
+	  <p>次の float型のデータ3つが nx, ny, nz に，</p>
+	  <p>次の unsigned char 型のデータ3つが r, g, b に対応しているので</p>
+	  <p>その順番に，頂点の数だけ読み込んでいく． <code></code></p>
+    <code><pre class="prettyprint lang-cpp">
+  std::vector &lt;kvs::Real32&gt; coords;    // 全頂点の位置情報を格納
+  std::vector &lt;kvs::Real32&gt; normals;   // 全頂点の法線情報を格納
+  std::vector &lt;kvs::UInt8&gt;  colors;    // 全頂点の色情報を格納
+  float p[3];           // 1頂点の位置情報
+  float np[3];          // 1頂点の法線情報
+  unsigned char c[3];   // 1頂点の色情報
+
+  for(size_t i=0; i&lt;numVert; i++ ) {
+    //---- 頂点の読み込み (float型　3つ分を読み込む)
+    fin.read( (char*) p, sizeof(float)*3 );
+    coords.push_back( p[0] );
+    coords.push_back( p[1] );
+    coords.push_back( p[2] );
+
+    //---- 法線の読み込み
+    fin.read( (char*)np, sizeof(float)*3 );
+    normals.push_back( np[0] );
+    normals.push_back( np[1] );
+    normals.push_back( np[2] );
+
+    //---- 色の読み込み
+    fin.read( (char*)c, sizeof(unsigned char)*3 );
+    colors.push_back( c[0] );
+    colors.push_back( c[1] );
+    colors.push_back( c[2] );
+  }
+   </pre></code>
+  
+	  <p>上で読み込んだデータからkvs::PointObjectを作成する．</p>
+<code><pre class="prettyprint lang-cpp">
+  // PointObjectのインスタンスを作成
+  kvs::PointObject *point = new kvs::PointObject();
+  point->setCoords( kvs::ValueArray&lt;kvs::Real32&gt;( coords ));   // 位置情報
+  point->setNormals( kvs::ValueArray&lt;kvs::Real32&gt;(normals ) ); // 法線情報
+  point->setColors( kvs::ValueArray&lt;kvs::UInt8&gt;( colors ) );   // 色情報
+  point->updateMinMaxCoords();     // 登録した点群の位置情報の最大値・最小値を求める
+</pre></code>
+	  <h3>5.　描画</h3>
+	  <p>点群を可視化する．</p>
+	  <p>ここでは，レンダラとして kvs::glsl::PointRendere を作成し，描画する．</p>
+	  <p>描画についてはこれまでと同様に，kvs::Application と kvs::Screen を使い，ScreenにPointObjectとPointRendere を登録する．</p>
+<code><pre class="prettyprint lang-cpp">
+  kvs::glsl::PointRenderer *renderer = new kvs::glsl::PointRenderer();
+
+  kvs::Application app( argc, argv );
+  kvs::Screen screen( &app );
+  screen.setGeometry( 0, 0, 512, 512 );
+  screen.setTitle( "Point Renderer");
+  screen.registerObject( point, renderer );
+  screen.show();
+
+  return( app.run() );
+</pre></code>
+	  <h3>6.　ヘッダファイル</h3>
+	  <p>使用したKVSクラスをインクルードしておく．ここでは，</p>
+	  <ul>
+	    <li>kvs::PointObject</li>
+	    <li>kvs::glsl::PointRenderer</li>
+    </ul>
+	  <p>と，描画のために</p>
+	  <ul>
+	    <li>kvs::Application</li>
+	    <li>kvs::Screen screen</li>
+    </ul>
+	  <p>を使った．</p>
+	  <p>また，C++でのファイルの入力を行ったので，以下の様なヘッダをインクルードする，</p>
+	  <code>
+	  <pre class="prettyprint lang-cpp">
+#include &lt;kvs/PointObject&gt;
+#include &lt;kvs/PointRenderer&gt;
+#include &lt;kvs/Screen&gt;
+#include &lt;kvs/Application&gt;
+
+#include &lt;fstream&gt;</pre> </code>
+  <h3>7.　まとめ</h3>
+  <p>以上をまとめたプログラムはこちら：　<a href="Program/plyImport.zip">plyImport.zip</a></p>
+  <p>&nbsp;</p>
+  <h3>8.　コンパイルと実行</h3>
+  <p>作成したプログラムをコンパイル，実行しよう．</p>
+  <p>KVSプログラムをコンパイルするためにはkvsmakeコマンドを用いてMakefileを作成した後に．コンパイルを行う．</p>
+  <p class="code">$ kvsmake -G　　　　　　　　　　&lt;-- Makefile の作成</p>
+  <p class="code">$ kvsmake　　　　　　　　　　　　&lt;-- コンパイル</p>
+  <p>エラーなくコンパイルできたら，実行してみよう．</p>
+  <p>コマンドライン引数として，PLYファイルが必要なので，<a href="Data/sphere.ply" target="_blank">sphere.ply</a>を今作業しているフォルダ（ここで作成したmain.cppと同じ，plyImportフォルダ内）にダウンロードしておこう．</p>
+<p class="code">$ ./plyImport sphere.ply　  </p>
+<p>以上を実行すると，球上に点群がサンプリングされた結果を確認することができる．</p>
+  <p class="image"><img src="img/PointRender.png" width="400" alt="Point View" /></p>
+
+
+	  <p>&nbsp;</p>
+	  <a name="sec3"></a>
+	  <h2>問題　データの読み込み部を変更してみよう</h2>
+	  <p> <a href="Data/tetrahedron_points.ply">tetrahedron_points.ply</a> はtetrahedron.ply の面上に点をサンプリングしたデータであり，PLY データの出力を<a href="https://www.meshlab.net/" target="_blank">MeshLab</a> を通して実行した．</p>
+    <p>このデータのコメント行を確認すると，色情報の次に不透明度 ( alpha ) があることが分かる．</p>
+    <p>上で作成したプログラムを改良して，tetrahedron_points.ply を読み込んで可視化してみよう．</p>
+    <p>（ここでは，レンダリングの際に不透明度を反映しなくても良いこととする）</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+	  <p align="right">Modefied at April 10, 2023</p>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#main -->
+
+  <div id="fotter">
+    <p><a href="index.html">TOP</a>　</p>
+  </div>
+  <!-- end div#fotter -->
+    
+</div>
+<!-- end div#wrapper -->
+
+</body>
+<!-- InstanceEnd --></html>

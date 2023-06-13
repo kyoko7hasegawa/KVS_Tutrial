@@ -55,7 +55,16 @@
     <dd id="nProg08"><a href="Program08.html">PBVRの実装</a></dd>
     <dd id="nAppendix"><a href="Appendix.html">付録：プログラム集</a></dd>
   </dl>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p><strong><a href="Point_data.html">点群データの可視化</a> </strong></p>
+  <dl>
+    <dd id="nPoint_ply"><a href="Point_ply.html">PLYデータ（点群データ）</a></dd>
+	<dd id="nPoint_vis"><a href="Point_vis.html">点群の可視化</a></dd>
+  </dl>
+
   <!-- InstanceEndEditable -->
+
   </div>
   <!-- end div#sidebar -->
 
@@ -130,7 +139,8 @@ if ( !volume-&gt;hasMinMaxValues() )
   <p>&nbsp;</p>
   <h3>4.　表示したい等値面の値をキーボードから入力する</h3>
   <p>キーボードから等値面の値を入力し，入力された値がボリュームデータのもつ最小値・最大値の範囲を超えていないかチェックする．</p>
-<code><pre class="prettyprint lang-cpp">
+<code>
+<pre class="prettyprint lang-cpp">
 // 等値面の値をキーボードから入力する
 double input_iso, iso;
 // ボリュームデータの最小値

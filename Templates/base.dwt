@@ -56,15 +56,16 @@
   </dl>
   <p><strong><br />
   </strong></p>
-  <p><strong> 点群データの可視化 </strong></p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p><strong><a href="../Point_data.html">点群データの可視化</a> </strong></p>
   <dl>
-    <dd id="nPoint_ply"><a href="../Point_ply.html">PLY形式（点群データ）</a></dd>
-	<dd id="nPoint_inout"><a href="../Point_inout.html">PLYデータの入出力（バイナリ）</a></dd>
-	<dd id="nPoint_vis"><a href="../Point_vis.html">点群の可視化 </a></dd>
+    <dd id="nPoint_ply"><a href="../Point_ply.html">PLYデータ（点群データ）</a></dd>
+	<dd id="nPoint_vis"><a href="../Point_vis.html">点群の可視化</a></dd>
   </dl>
 
-
   <!-- TemplateEndEditable -->
+
   </div>
   <!-- end div#sidebar -->
 

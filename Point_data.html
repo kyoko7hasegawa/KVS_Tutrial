@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>KVS Programming Guide</title>
+<!-- InstanceEndEditable -->
+<link href="base.css" rel="stylesheet" type="text/css" media="screen, tv, projection" />
+<!-- Code 装飾用 Google google-code-prettify -->
+<!--<link rel="stylesheet" type="text/css" href="code-prettify/src/prettify.css">-->
+<!--<link rel="stylesheet" type="text/css" href="../code-prettify/styles/desert.css">-->
+<link rel="stylesheet" type="text/css" href="code-prettify/styles/tomorrow-night-blue.css">
+<script type="text/javascript" src="code-prettify/src/prettify.js"></script>
+<script type="text/javascript" src="code-prettify/src/lang-css.js"></script>
+<!-- ここまで -->
+
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<!-- InstanceParam name="id" type="text" value="basis" -->
+</head>
+
+<body onload="PR.prettyPrint()" id="basis">
+<div id="wrapper">
+  <div id="header">
+    <h1>KVS Tutorial (version 2〜)</h1>
+    <p>&nbsp;</p>
+    <p align="right"> kvs version 3.0</p>
+    <p align="right">kvs : <a href=" https://github.com/naohisas/KVS" target="_blank"> https://github.com/naohisas/KVS</a></p>
+  </div>
+  <!-- end div#header -->
+  
+  <div id="sidebar">
+  <!-- InstanceBeginEditable name="sidebarArea" -->
+  <dl>
+    <dd id="nInstall"><a href="install.html">インストール</a></dd>
+    <dd id="nBasis"><a href="basis.html">基本的な使い方</a></dd>
+    <dd id="nTransFunc"><a href="transFunc.html">伝達関数を調整する</a></dd>
+  <!--  <dd id="nDICOM"><a href="../DICOM.html">DICOMデータを読み込む</a></dd>  -->
+  </dl>
+  <p><strong><br />
+  </strong></p>
+  <p><strong> <a href="Program.html">KVSプログラムの作成</a></strong></p>
+  <dl>
+    <dd id="nProg01"><a href="Program01.html">3次元ベクトルの演算</a></dd>
+    <dd id="nProgMatrix"><a href="ProgramMatrix.html">行列クラス</a></dd>
+    <dd id="nProg02"><a href="Program02.html">行列の演算（行列クラスの応用）</a></dd>
+    <dd id="nProgRandom"><a href="ProgramRandom.html">乱数生成</a></dd>
+    <dd id="nProg03"><a href="Program03.html">オブジェクトについて</a></dd>
+    <dd id="nProg04"><a href="Program04.html">構造型ボリュームデータの作成</a></dd>
+    <dd id="nProg05"><a href="Program05.html">面データの可視化</a></dd>
+    <dd id="nProgIso"><a href="ProgramIso.html">等値面の可視化</a></dd>
+    <dd id="nProg06"><a href="Program06.html">可視化パイプライン</a></dd>
+    <dd id="nProg07"><a href="Program07.html">レイキャスティングの実装</a></dd>
+    <dd id="nProg08"><a href="Program08.html">PBVRの実装</a></dd>
+    <dd id="nAppendix"><a href="Appendix.html">付録：プログラム集　</a></dd>
+  </dl>
+  <p><strong><br />
+  </strong></p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p><strong><a href="Point_data.html">点群データの可視化</a> </strong></p>
+  <dl>
+    <dd id="nPoint_ply"><a href="Point_ply.html">PLYデータ（点群データ）</a></dd>
+	<dd id="nPoint_vis"><a href="Point_vis.html">点群の可視化</a></dd>
+  </dl>
+  <!-- InstanceEndEditable -->
+
+  </div>
+  <!-- end div#sidebar -->
+
+  <div id="main">
+  <!-- InstanceBeginEditable name="mainArea" -->
+  <h1>点群データの可視化</h1>
+  <p>&nbsp;</p>
+  <p>まず．点群データについて基本的な情報を確認しよう．</p>
+  <p>&nbsp;</p>
+  <h2>点群データ（PointObject）</h2>
+  <p>CGで点データを描画するためには，</p>
+  <p>・<strong>位置情報</strong> ( x, y, z )，</p>
+  <p>・<strong>色情報</strong> ( nx, ny, nz )</p>
+  <p>をもっている必要がある．  </p>
+  <p>他にも，陰影づけのために</p>
+  <p>・<strong>法線情報</strong> ( nx, ny, nz )，</p>
+  <p>や半透明に描画するための</p>
+  <p>・<strong>不透明度</strong> ( α )</p>
+  <p>などを持つ場合がある．</p>
+  <p>&nbsp;</p>
+  <p>これらの情報をもつ点の集まりを「点群」と呼ぶ．</p>
+  <p>&nbsp;</p>
+  <p>但し，形状計測装置によって計測された点群データは「法線」を計測することは困難であるため：</p>
+  <p>　・点群からメッシュ（ポリゴン）を作成して法線を計算する</p>
+  <p>　・点群から曲面を作成して法線を計算する</p>
+  <p>　・点群の位置情報から主成分分析を行って法線を計算する</p>
+  <p>などの方法で法線を取得する事が多い．</p>
+  <p>&nbsp;</p>
+  <h2>点群データの利用</h2>
+
+  <p>レーザ計測やフォトグラメトリの技術開発によって3次元計測が容易になってきており，その利活用が注目されている，但し，計測された生データそのままではノイズが多く残っていることも多く，ノイズ除去や位置合わせなどコストの高い処理が必要である．  </p>
+  <p>そのため，処理された3次元計測データは様々な分野で重要視されており，</p>
+    <p><a href="https://3d.si.edu/" target="_blank">スミソニアン博物館</a></p>
+  <p>や</p>
+  <p><a href="https://sketchfab.com/" target="_blank">Skechfab</a></p>
+  <p>のようにデータを公開している機関も存在する．  </p>
+  <p>他にも国内の都市を計測した</p>
+  <p><a href="https://www.mlit.go.jp/plateau/" target="_blank">Plateau</a></p>
+  <p>のような都市モデルデータを公開しているものもある．</p>
+  <p>上述のWebサイトではデータをダウンロードして使用することができる．</p>
+  <p>&nbsp;</p>
+  <p>このような点群データを使用する際には，独自フォーマットではデータの共有ができない．そのため．以下のようなデータフォーマットを使ってデータを共有することがある（他にも色々あります）.</p>
+  <p>&nbsp;</p>
+  <p>※（）の中は拡張子</p>
+  <ul>
+    <dl>
+      <dt>CSV (.csv ), TEXT( .txt ), DAT ( .dat )，XYZ ( .xyz )</dt>
+      <dd>データ区切りがカンマまたはスペース，タブのテキストファイル（ASCII）形式．</dd>
+      <dt>LAS ( .las ) / LAZ ( .laz )</dt>
+      <dd>LiDARデータの標準フォーマット（バイナリ形式）．LAZはLASを圧縮した形式．</dd>
+      <dt>PTX ( .ptx )</dt>
+      <dd>レーザ計測で扱われる事が多く，計測順にデータが並んでいる.</dd>
+      <dt>PTS ( .pts )</dt>
+      <dd>Leica社製のレーザースキャナで取得したデータの出力形式に多く使われ，ASCII形式で出力されることが多い.</dd>
+      <dt>PLY ( .ply )</dt>
+      <dd>3次元計測データを格納するためにスタンフォード大学で提案されたファイル形式（ASCII, バイナリ）</dd>
+    </dl>
+    </ul>
+  <p>&nbsp;</p>
+  <h2>点群処理ソフト</h2>
+  <p>&nbsp;</p>
+  <p>点群データが広く使われるようになり，データのノイズ除去や位置合わせ，データの解析，メッシュ作成などができるソフトウェアが開発されている．</p>
+  <p><a href="https://www.elysium-global.com/ja/product/infipoints/" target="_blank">InfiPoints (株式会社エリジオン） </a></p>
+  <p>や</p>
+  <p><a href="https://www.kimoto.co.jp/business/datakitchen/3ddata" target="_blank">geoverse (株式会社きもと)</a></p>
+  <p>などのような商用ソフトウェアはCADへの出力なども可能な多機能な有償ソフトである．</p>
+  <p>一方で，</p>
+  <p><a href="https://www.meshlab.net/" target="_blank">MeshLab</a></p>
+  <p>や</p>
+  <p><a href="https://www.danielgm.net/cc/" target="_blank">CloudCompare</a></p>
+  <p><a href="https://pointclouds.org/" target="_blank">Point Cloud Libary (PCL)</a></p>
+  <p>のようなオープンソース（無償）の処理ソフトウェアもあり，広く活用されている．</p>
+  <p>&nbsp;</p>
+  <p align="right">Modefied at April 10, 2023</p>
+  <p>&nbsp;</p>
+  <!-- InstanceEndEditable -->
+  </div>
+  <!-- end div#main -->
+
+  <div id="fotter">
+    <p><a href="index.html">TOP</a>　</p>
+  </div>
+  <!-- end div#fotter -->
+    
+</div>
+<!-- end div#wrapper -->
+
+</body>
+<!-- InstanceEnd --></html>
